@@ -1,6 +1,0 @@
-Invoking command in '/home/scr/robocup/amr_robot_ws/build/arm_interfaces': CONDA_PROMPT_MODIFIER=(base) /usr/bin/cmake /home/scr/robocup/amr_robot_ws/src/arm_interfaces -DCATKIN_INSTALL_INTO_PREFIX_ROOT=0 -DCMAKE_INSTALL_PREFIX=/home/scr/robocup/amr_robot_ws/install/arm_interfaces
-Invoked command in '/home/scr/robocup/amr_robot_ws/build/arm_interfaces' returned '0': CONDA_PROMPT_MODIFIER=(base) /usr/bin/cmake /home/scr/robocup/amr_robot_ws/src/arm_interfaces -DCATKIN_INSTALL_INTO_PREFIX_ROOT=0 -DCMAKE_INSTALL_PREFIX=/home/scr/robocup/amr_robot_ws/install/arm_interfaces
-Invoking command in '/home/scr/robocup/amr_robot_ws/build/arm_interfaces': CONDA_PROMPT_MODIFIER=(base) /usr/bin/cmake --build /home/scr/robocup/amr_robot_ws/build/arm_interfaces -- -j24 -l24
-Invoked command in '/home/scr/robocup/amr_robot_ws/build/arm_interfaces' returned '0': CONDA_PROMPT_MODIFIER=(base) /usr/bin/cmake --build /home/scr/robocup/amr_robot_ws/build/arm_interfaces -- -j24 -l24
-Invoking command in '/home/scr/robocup/amr_robot_ws/build/arm_interfaces': CONDA_PROMPT_MODIFIER=(base) /usr/bin/cmake --install /home/scr/robocup/amr_robot_ws/build/arm_interfaces
-Invoked command in '/home/scr/robocup/amr_robot_ws/build/arm_interfaces' returned '0': CONDA_PROMPT_MODIFIER=(base) /usr/bin/cmake --install /home/scr/robocup/amr_robot_ws/build/arm_interfaces
