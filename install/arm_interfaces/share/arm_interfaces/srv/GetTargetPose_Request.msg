@@ -1,2 +1,0 @@
-string target_color
-string target_size
