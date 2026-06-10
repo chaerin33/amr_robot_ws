@@ -1,5 +1,0 @@
-[console_scripts]
-amr_robot_node = arm_controller_pkg.amr_robot_node:main
-cargo_manager_node = arm_controller_pkg.cargo_manager_node:main
-gripper_node = arm_controller_pkg.gripper_node:main
-
