@@ -109,34 +109,6 @@ string  message         # 실패 시 이유
 
 ---
 
-## ⚙️ 의존성
-
-- ROS2 Humble
-- `rbpodo` (로봇 제어 라이브러리)
-- `numpy`
-
----
-
-## 🔨 빌드 방법
-
-```bash
-cd ~/robocup/amr_robot_ws
-
-export PATH=/usr/bin:/usr/local/bin:/opt/ros/humble/bin:$PATH
-source /opt/ros/humble/setup.bash
-
-colcon build
-source install/setup.bash
-```
-
-> conda 환경이 활성화된 상태라면 빌드 전에 캐시를 지워야 할 수 있습니다:
-> ```bash
-> rm -rf build/ install/ log/
-> colcon build
-> ```
-
----
-
 ## ▶️ 실행 방법
 
 터미널마다 아래 source를 먼저 실행하세요:
@@ -175,26 +147,3 @@ ros2 service call /amr_robot_command arm_interfaces/srv/ArmCommand \
 
 ---
 
-## 👥 팀원 환경 설정
-
-`~/.bashrc`에 아래 줄을 추가하면 터미널 열 때마다 자동으로 환경이 잡힙니다:
-
-```bash
-source /opt/ros/humble/setup.bash
-source ~/robocup/amr_robot_ws/install/setup.bash
-```
-
----
-
-## 🔗 연관 저장소
-
-| 저장소 | 담당 | 설명 |
-|--------|------|------|
-| [amr_robot_ws](https://github.com/chaerin33/amr_robot_ws) | 우리팀 | 이 저장소 |
-| [MasterPC_ws](https://github.com/chaerin33/MasterPC_ws) | 우리팀 | 마스터 PC 플래닝 / 매니저 |
-| amr_nav_ws | 자율주행팀 | AMR 자율주행 |
-| workbench_ws | 오린팀 | 워크벤치 제어 |
-
----
-
-*이 문서는 Claude와의 대화에서 확정된 설계 내용을 바탕으로 작성되었습니다.*
