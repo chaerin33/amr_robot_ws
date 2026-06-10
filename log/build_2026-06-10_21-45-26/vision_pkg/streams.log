@@ -1,0 +1,21 @@
+[0.361s] Invoking command in '/home/scr/robocup/amr_robot_ws/src/vision_pkg': CMAKE_PREFIX_PATH=/home/scr/robocup/amr_robot_ws/install/arm_interfaces CONDA_PROMPT_MODIFIER=(base) LD_LIBRARY_PATH=/home/scr/robocup/amr_robot_ws/install/arm_interfaces/lib:${LD_LIBRARY_PATH} PKG_CONFIG_PATH=/home/scr/robocup/amr_robot_ws/install/arm_interfaces/lib/x86_64-linux-gnu/pkgconfig:/home/scr/robocup/amr_robot_ws/install/arm_interfaces/lib/pkgconfig PYTHONPATH=/home/scr/robocup/amr_robot_ws/build/vision_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/scr/robocup/amr_robot_ws/install/vision_pkg/lib/python3.10/site-packages:/home/scr/robocup/amr_robot_ws/install/arm_interfaces/local/lib/python3.10/dist-packages:${PYTHONPATH} ROS_PACKAGE_PATH=/home/scr/robocup/amr_robot_ws/install/arm_interfaces/share /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/vision_pkg build --build-base /home/scr/robocup/amr_robot_ws/build/vision_pkg/build install --record /home/scr/robocup/amr_robot_ws/build/vision_pkg/install.log --single-version-externally-managed install_data
+[0.453s] running egg_info
+[0.453s] writing ../../build/vision_pkg/vision_pkg.egg-info/PKG-INFO
+[0.453s] writing dependency_links to ../../build/vision_pkg/vision_pkg.egg-info/dependency_links.txt
+[0.454s] writing entry points to ../../build/vision_pkg/vision_pkg.egg-info/entry_points.txt
+[0.454s] writing requirements to ../../build/vision_pkg/vision_pkg.egg-info/requires.txt
+[0.454s] writing top-level names to ../../build/vision_pkg/vision_pkg.egg-info/top_level.txt
+[0.454s] reading manifest file '../../build/vision_pkg/vision_pkg.egg-info/SOURCES.txt'
+[0.455s] writing manifest file '../../build/vision_pkg/vision_pkg.egg-info/SOURCES.txt'
+[0.455s] running build
+[0.455s] running build_py
+[0.455s] running install
+[0.455s] running install_lib
+[0.455s] running install_data
+[0.455s] running install_egg_info
+[0.456s] removing '/home/scr/robocup/amr_robot_ws/install/vision_pkg/lib/python3.10/site-packages/vision_pkg-0.0.0-py3.10.egg-info' (and everything under it)
+[0.456s] Copying ../../build/vision_pkg/vision_pkg.egg-info to /home/scr/robocup/amr_robot_ws/install/vision_pkg/lib/python3.10/site-packages/vision_pkg-0.0.0-py3.10.egg-info
+[0.456s] running install_scripts
+[0.465s] Installing vision_node script to /home/scr/robocup/amr_robot_ws/install/vision_pkg/lib/vision_pkg
+[0.465s] writing list of installed files to '/home/scr/robocup/amr_robot_ws/build/vision_pkg/install.log'
+[0.479s] Invoked command in '/home/scr/robocup/amr_robot_ws/src/vision_pkg' returned '0': CMAKE_PREFIX_PATH=/home/scr/robocup/amr_robot_ws/install/arm_interfaces CONDA_PROMPT_MODIFIER=(base) LD_LIBRARY_PATH=/home/scr/robocup/amr_robot_ws/install/arm_interfaces/lib:${LD_LIBRARY_PATH} PKG_CONFIG_PATH=/home/scr/robocup/amr_robot_ws/install/arm_interfaces/lib/x86_64-linux-gnu/pkgconfig:/home/scr/robocup/amr_robot_ws/install/arm_interfaces/lib/pkgconfig PYTHONPATH=/home/scr/robocup/amr_robot_ws/build/vision_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/scr/robocup/amr_robot_ws/install/vision_pkg/lib/python3.10/site-packages:/home/scr/robocup/amr_robot_ws/install/arm_interfaces/local/lib/python3.10/dist-packages:${PYTHONPATH} ROS_PACKAGE_PATH=/home/scr/robocup/amr_robot_ws/install/arm_interfaces/share /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/vision_pkg build --build-base /home/scr/robocup/amr_robot_ws/build/vision_pkg/build install --record /home/scr/robocup/amr_robot_ws/build/vision_pkg/install.log --single-version-externally-managed install_data

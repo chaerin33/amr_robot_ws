@@ -1,0 +1,8 @@
+{
+  "package_name": "arm_interfaces",
+  "non_idl_tuples": [
+    "/home/scr/robocup/amr_robot_ws/src/arm_interfaces:srv/ArmCommand.srv",
+    "/home/scr/robocup/amr_robot_ws/src/arm_interfaces:srv/Cargo.srv",
+    "/home/scr/robocup/amr_robot_ws/src/arm_interfaces:srv/GetTargetPose.srv"
+  ]
+}

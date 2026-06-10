@@ -1,0 +1,310 @@
+[0.005s] Invoking command in '/home/scr/robocup/amr_robot_ws/build/arm_interfaces': CONDA_PROMPT_MODIFIER=(base) /usr/bin/cmake /home/scr/robocup/amr_robot_ws/src/arm_interfaces -DCATKIN_INSTALL_INTO_PREFIX_ROOT=0 -DCMAKE_INSTALL_PREFIX=/home/scr/robocup/amr_robot_ws/install/arm_interfaces
+[0.028s] -- The C compiler identification is GNU 11.4.0
+[0.049s] -- The CXX compiler identification is GNU 11.4.0
+[0.052s] -- Detecting C compiler ABI info
+[0.080s] -- Detecting C compiler ABI info - done
+[0.083s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.083s] -- Detecting C compile features
+[0.083s] -- Detecting C compile features - done
+[0.084s] -- Detecting CXX compiler ABI info
+[0.115s] -- Detecting CXX compiler ABI info - done
+[0.118s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.118s] -- Detecting CXX compile features
+[0.119s] -- Detecting CXX compile features - done
+[0.121s] -- Found ament_cmake: 1.3.14 (/opt/ros/humble/share/ament_cmake/cmake)
+[0.190s] -- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+[0.252s] -- Found rosidl_default_generators: 1.2.1 (/opt/ros/humble/share/rosidl_default_generators/cmake)
+[0.255s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[0.263s] -- Found rosidl_adapter: 3.1.8 (/opt/ros/humble/share/rosidl_adapter/cmake)
+[0.294s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[0.431s] -- Found ament_cmake_ros: 0.10.0 (/opt/ros/humble/share/ament_cmake_ros/cmake)
+[0.513s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[0.614s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[0.623s] -- Found PythonInterp: /usr/bin/python3 (found suitable version "3.10.12", minimum required is "3.6") 
+[0.626s] -- Found python_cmake_module: 0.10.0 (/opt/ros/humble/share/python_cmake_module/cmake)
+[0.637s] -- Found PythonLibs: /usr/lib/x86_64-linux-gnu/libpython3.10.so (found suitable version "3.10.12", minimum required is "3.5") 
+[0.637s] -- Using PYTHON_EXECUTABLE: /usr/bin/python3
+[0.637s] -- Using PYTHON_INCLUDE_DIRS: /usr/include/python3.10
+[0.637s] -- Using PYTHON_LIBRARIES: /usr/lib/x86_64-linux-gnu/libpython3.10.so
+[0.646s] -- Found PythonExtra: .so  
+[0.686s] -- Configuring done
+[0.696s] -- Generating done
+[0.697s] [33mCMake Warning:
+[0.697s]   Manually-specified variables were not used by the project:
+[0.697s] 
+[0.697s]     CATKIN_INSTALL_INTO_PREFIX_ROOT
+[0.697s] 
+[0.697s] [0m
+[0.700s] -- Build files have been written to: /home/scr/robocup/amr_robot_ws/build/arm_interfaces
+[0.705s] Invoked command in '/home/scr/robocup/amr_robot_ws/build/arm_interfaces' returned '0': CONDA_PROMPT_MODIFIER=(base) /usr/bin/cmake /home/scr/robocup/amr_robot_ws/src/arm_interfaces -DCATKIN_INSTALL_INTO_PREFIX_ROOT=0 -DCMAKE_INSTALL_PREFIX=/home/scr/robocup/amr_robot_ws/install/arm_interfaces
+[0.706s] Invoking command in '/home/scr/robocup/amr_robot_ws/build/arm_interfaces': CONDA_PROMPT_MODIFIER=(base) /usr/bin/cmake --build /home/scr/robocup/amr_robot_ws/build/arm_interfaces -- -j24 -l24
+[0.723s] [  2%] [34m[1mGenerating C code for ROS interfaces[0m
+[0.727s] [  4%] [34m[1mGenerating C++ code for ROS interfaces[0m
+[0.727s] [  6%] [34m[1mGenerating Rust code for ROS interfaces[0m
+[0.730s] [  6%] Built target ament_cmake_python_copy_arm_interfaces
+[0.826s] running egg_info
+[0.827s] creating arm_interfaces.egg-info
+[0.827s] writing arm_interfaces.egg-info/PKG-INFO
+[0.827s] writing dependency_links to arm_interfaces.egg-info/dependency_links.txt
+[0.827s] writing top-level names to arm_interfaces.egg-info/top_level.txt
+[0.827s] writing manifest file 'arm_interfaces.egg-info/SOURCES.txt'
+[0.828s] reading manifest file 'arm_interfaces.egg-info/SOURCES.txt'
+[0.828s] writing manifest file 'arm_interfaces.egg-info/SOURCES.txt'
+[0.840s] [  6%] Built target ament_cmake_python_build_arm_interfaces_egg
+[0.844s] [  6%] Built target arm_interfaces__rs
+[0.897s] [  8%] [32mBuilding C object CMakeFiles/arm_interfaces__rosidl_generator_c.dir/rosidl_generator_c/arm_interfaces/srv/detail/arm_command__functions.c.o[0m
+[0.897s] [ 10%] [32mBuilding C object CMakeFiles/arm_interfaces__rosidl_generator_c.dir/rosidl_generator_c/arm_interfaces/srv/detail/cargo__functions.c.o[0m
+[0.897s] [ 12%] [32mBuilding C object CMakeFiles/arm_interfaces__rosidl_generator_c.dir/rosidl_generator_c/arm_interfaces/srv/detail/get_target_pose__functions.c.o[0m
+[0.900s] [ 12%] Built target arm_interfaces__cpp
+[0.904s] [ 14%] [34m[1mGenerating C++ type support dispatch for ROS interfaces[0m
+[0.904s] [ 18%] [34m[1mGenerating C++ type support for eProsima Fast-RTPS[0m
+[0.904s] [ 18%] [34m[1mGenerating C++ introspection for ROS interfaces[0m
+[0.922s] [ 20%] [32m[1mLinking C shared library libarm_interfaces__rosidl_generator_c.so[0m
+[0.936s] [ 20%] Built target arm_interfaces__rosidl_generator_c
+[0.940s] [ 25%] [34m[1mGenerating C type support for eProsima Fast-RTPS[0m
+[0.940s] [ 25%] [34m[1mGenerating C introspection for ROS interfaces[0m
+[0.941s] [ 27%] [34m[1mGenerating C type support dispatch for ROS interfaces[0m
+[1.040s] [ 29%] [32mBuilding CXX object CMakeFiles/arm_interfaces__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/arm_interfaces/srv/arm_command__type_support.cpp.o[0m
+[1.040s] [ 31%] [32mBuilding CXX object CMakeFiles/arm_interfaces__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/arm_interfaces/srv/cargo__type_support.cpp.o[0m
+[1.040s] [ 33%] [32mBuilding CXX object CMakeFiles/arm_interfaces__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/arm_interfaces/srv/get_target_pose__type_support.cpp.o[0m
+[1.053s] [ 35%] [32mBuilding CXX object CMakeFiles/arm_interfaces__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/arm_interfaces/srv/detail/arm_command__type_support.cpp.o[0m
+[1.053s] [ 39%] [32mBuilding CXX object CMakeFiles/arm_interfaces__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/arm_interfaces/srv/detail/get_target_pose__type_support.cpp.o[0m
+[1.053s] [ 39%] [32mBuilding CXX object CMakeFiles/arm_interfaces__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/arm_interfaces/srv/detail/cargo__type_support.cpp.o[0m
+[1.072s] [ 41%] [32mBuilding CXX object CMakeFiles/arm_interfaces__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/arm_interfaces/srv/detail/dds_fastrtps/get_target_pose__type_support.cpp.o[0m
+[1.072s] [ 43%] [32mBuilding CXX object CMakeFiles/arm_interfaces__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/arm_interfaces/srv/detail/dds_fastrtps/arm_command__type_support.cpp.o[0m
+[1.072s] [ 45%] [32mBuilding CXX object CMakeFiles/arm_interfaces__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/arm_interfaces/srv/detail/dds_fastrtps/cargo__type_support.cpp.o[0m
+[1.079s] [ 47%] [32mBuilding CXX object CMakeFiles/arm_interfaces__rosidl_typesupport_c.dir/rosidl_typesupport_c/arm_interfaces/srv/arm_command__type_support.cpp.o[0m
+[1.080s] [ 52%] [32mBuilding CXX object CMakeFiles/arm_interfaces__rosidl_typesupport_c.dir/rosidl_typesupport_c/arm_interfaces/srv/get_target_pose__type_support.cpp.o[0m
+[1.080s] [ 52%] [32mBuilding CXX object CMakeFiles/arm_interfaces__rosidl_typesupport_c.dir/rosidl_typesupport_c/arm_interfaces/srv/cargo__type_support.cpp.o[0m
+[1.098s] [ 54%] [32m[1mLinking CXX shared library libarm_interfaces__rosidl_typesupport_c.so[0m
+[1.101s] [ 56%] [32mBuilding C object CMakeFiles/arm_interfaces__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/arm_interfaces/srv/detail/get_target_pose__type_support.c.o[0m
+[1.101s] [ 60%] [32mBuilding C object CMakeFiles/arm_interfaces__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/arm_interfaces/srv/detail/cargo__type_support.c.o[0m
+[1.101s] [ 60%] [32mBuilding C object CMakeFiles/arm_interfaces__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/arm_interfaces/srv/detail/arm_command__type_support.c.o[0m
+[1.108s] [ 62%] [32mBuilding CXX object CMakeFiles/arm_interfaces__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/arm_interfaces/srv/detail/get_target_pose__type_support_c.cpp.o[0m
+[1.108s] [ 64%] [32mBuilding CXX object CMakeFiles/arm_interfaces__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/arm_interfaces/srv/detail/arm_command__type_support_c.cpp.o[0m
+[1.108s] [ 66%] [32mBuilding CXX object CMakeFiles/arm_interfaces__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/arm_interfaces/srv/detail/cargo__type_support_c.cpp.o[0m
+[1.122s] [ 66%] Built target arm_interfaces__rosidl_typesupport_c
+[1.126s] [ 68%] [32m[1mLinking C shared library libarm_interfaces__rosidl_typesupport_introspection_c.so[0m
+[1.140s] [ 68%] Built target arm_interfaces__rosidl_typesupport_introspection_c
+[1.148s] [ 70%] [32m[1mLinking CXX shared library libarm_interfaces__rosidl_typesupport_cpp.so[0m
+[1.165s] [ 70%] Built target arm_interfaces__rosidl_typesupport_cpp
+[1.228s] [ 72%] [32m[1mLinking CXX shared library libarm_interfaces__rosidl_typesupport_introspection_cpp.so[0m
+[1.259s] [ 72%] Built target arm_interfaces__rosidl_typesupport_introspection_cpp
+[1.261s] [ 75%] [32m[1mLinking CXX shared library libarm_interfaces__rosidl_typesupport_fastrtps_c.so[0m
+[1.261s] [ 77%] [32m[1mLinking CXX shared library libarm_interfaces__rosidl_typesupport_fastrtps_cpp.so[0m
+[1.291s] [ 77%] Built target arm_interfaces__rosidl_typesupport_fastrtps_c
+[1.291s] [ 77%] Built target arm_interfaces__rosidl_typesupport_fastrtps_cpp
+[1.298s] [ 77%] Built target arm_interfaces
+[1.305s] [ 79%] [34m[1mGenerating Python code for ROS interfaces[0m
+[1.566s] [ 79%] Built target arm_interfaces__py
+[1.573s] [ 83%] [32mBuilding C object CMakeFiles/arm_interfaces__rosidl_generator_py.dir/rosidl_generator_py/arm_interfaces/srv/_get_target_pose_s.c.o[0m
+[1.573s] [ 83%] [32mBuilding C object CMakeFiles/arm_interfaces__rosidl_generator_py.dir/rosidl_generator_py/arm_interfaces/srv/_arm_command_s.c.o[0m
+[1.574s] [ 85%] [32mBuilding C object CMakeFiles/arm_interfaces__rosidl_generator_py.dir/rosidl_generator_py/arm_interfaces/srv/_cargo_s.c.o[0m
+[1.621s] [ 87%] [32m[1mLinking C shared library rosidl_generator_py/arm_interfaces/libarm_interfaces__rosidl_generator_py.so[0m
+[1.637s] [ 87%] Built target arm_interfaces__rosidl_generator_py
+[1.645s] [ 89%] [32mBuilding C object CMakeFiles/arm_interfaces__rosidl_typesupport_introspection_c__pyext.dir/rosidl_generator_py/arm_interfaces/_arm_interfaces_s.ep.rosidl_typesupport_introspection_c.c.o[0m
+[1.645s] [ 91%] [32mBuilding C object CMakeFiles/arm_interfaces__rosidl_typesupport_c__pyext.dir/rosidl_generator_py/arm_interfaces/_arm_interfaces_s.ep.rosidl_typesupport_c.c.o[0m
+[1.646s] [ 93%] [32mBuilding C object CMakeFiles/arm_interfaces__rosidl_typesupport_fastrtps_c__pyext.dir/rosidl_generator_py/arm_interfaces/_arm_interfaces_s.ep.rosidl_typesupport_fastrtps_c.c.o[0m
+[1.687s] [ 95%] [32m[1mLinking C shared library rosidl_generator_py/arm_interfaces/arm_interfaces_s__rosidl_typesupport_c.cpython-310-x86_64-linux-gnu.so[0m
+[1.687s] [ 97%] [32m[1mLinking C shared library rosidl_generator_py/arm_interfaces/arm_interfaces_s__rosidl_typesupport_introspection_c.cpython-310-x86_64-linux-gnu.so[0m
+[1.687s] [100%] [32m[1mLinking C shared library rosidl_generator_py/arm_interfaces/arm_interfaces_s__rosidl_typesupport_fastrtps_c.cpython-310-x86_64-linux-gnu.so[0m
+[1.699s] [100%] Built target arm_interfaces__rosidl_typesupport_introspection_c__pyext
+[1.699s] [100%] Built target arm_interfaces__rosidl_typesupport_c__pyext
+[1.700s] [100%] Built target arm_interfaces__rosidl_typesupport_fastrtps_c__pyext
+[1.705s] Invoked command in '/home/scr/robocup/amr_robot_ws/build/arm_interfaces' returned '0': CONDA_PROMPT_MODIFIER=(base) /usr/bin/cmake --build /home/scr/robocup/amr_robot_ws/build/arm_interfaces -- -j24 -l24
+[1.709s] Invoking command in '/home/scr/robocup/amr_robot_ws/build/arm_interfaces': CONDA_PROMPT_MODIFIER=(base) /usr/bin/cmake --install /home/scr/robocup/amr_robot_ws/build/arm_interfaces
+[1.712s] -- Install configuration: ""
+[1.712s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/ament_index/resource_index/rosidl_interfaces/arm_interfaces
+[1.712s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces
+[1.712s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/msg
+[1.712s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/msg/rosidl_generator_c__visibility_control.h
+[1.712s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv
+[1.712s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/detail
+[1.712s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/detail/get_target_pose__functions.c
+[1.712s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/detail/get_target_pose__struct.h
+[1.712s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/detail/get_target_pose__functions.h
+[1.712s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/detail/arm_command__functions.h
+[1.712s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/detail/cargo__type_support.h
+[1.712s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/detail/get_target_pose__type_support.h
+[1.712s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/detail/arm_command__type_support.h
+[1.712s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/detail/cargo__functions.c
+[1.712s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/detail/arm_command__functions.c
+[1.712s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/detail/cargo__struct.h
+[1.712s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/detail/arm_command__struct.h
+[1.712s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/detail/cargo__functions.h
+[1.712s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/cargo.h
+[1.712s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/get_target_pose.h
+[1.712s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/arm_command.h
+[1.713s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/environment/library_path.sh
+[1.713s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/environment/library_path.dsv
+[1.713s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/lib/libarm_interfaces__rosidl_generator_c.so
+[1.713s] -- Set runtime path of "/home/scr/robocup/amr_robot_ws/install/arm_interfaces/lib/libarm_interfaces__rosidl_generator_c.so" to ""
+[1.713s] -- Up-to-date: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces
+[1.713s] -- Up-to-date: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/msg
+[1.713s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/msg/rosidl_typesupport_fastrtps_c__visibility_control.h
+[1.713s] -- Up-to-date: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv
+[1.713s] -- Up-to-date: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/detail
+[1.713s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/detail/cargo__rosidl_typesupport_fastrtps_c.h
+[1.713s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/detail/get_target_pose__rosidl_typesupport_fastrtps_c.h
+[1.713s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/detail/arm_command__rosidl_typesupport_fastrtps_c.h
+[1.713s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/lib/libarm_interfaces__rosidl_typesupport_fastrtps_c.so
+[1.713s] -- Set runtime path of "/home/scr/robocup/amr_robot_ws/install/arm_interfaces/lib/libarm_interfaces__rosidl_typesupport_fastrtps_c.so" to ""
+[1.713s] -- Up-to-date: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces
+[1.713s] -- Up-to-date: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/msg
+[1.713s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/msg/rosidl_typesupport_introspection_c__visibility_control.h
+[1.713s] -- Up-to-date: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv
+[1.713s] -- Up-to-date: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/detail
+[1.713s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/detail/arm_command__type_support.c
+[1.713s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/detail/cargo__rosidl_typesupport_introspection_c.h
+[1.713s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/detail/arm_command__rosidl_typesupport_introspection_c.h
+[1.713s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/detail/get_target_pose__type_support.c
+[1.713s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/detail/cargo__type_support.c
+[1.713s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/detail/get_target_pose__rosidl_typesupport_introspection_c.h
+[1.713s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/lib/libarm_interfaces__rosidl_typesupport_introspection_c.so
+[1.713s] -- Set runtime path of "/home/scr/robocup/amr_robot_ws/install/arm_interfaces/lib/libarm_interfaces__rosidl_typesupport_introspection_c.so" to ""
+[1.713s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/lib/libarm_interfaces__rosidl_typesupport_c.so
+[1.713s] -- Set runtime path of "/home/scr/robocup/amr_robot_ws/install/arm_interfaces/lib/libarm_interfaces__rosidl_typesupport_c.so" to ""
+[1.713s] -- Up-to-date: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces
+[1.713s] -- Up-to-date: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/msg
+[1.713s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/msg/rosidl_generator_cpp__visibility_control.hpp
+[1.713s] -- Up-to-date: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv
+[1.713s] -- Up-to-date: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/detail
+[1.714s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/detail/get_target_pose__type_support.hpp
+[1.714s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/detail/arm_command__struct.hpp
+[1.714s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/detail/cargo__builder.hpp
+[1.714s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/detail/get_target_pose__struct.hpp
+[1.714s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/detail/arm_command__builder.hpp
+[1.714s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/detail/arm_command__traits.hpp
+[1.714s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/detail/get_target_pose__builder.hpp
+[1.714s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/detail/arm_command__type_support.hpp
+[1.714s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/detail/cargo__type_support.hpp
+[1.714s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/detail/cargo__traits.hpp
+[1.714s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/detail/get_target_pose__traits.hpp
+[1.714s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/detail/cargo__struct.hpp
+[1.714s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/get_target_pose.hpp
+[1.714s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/cargo.hpp
+[1.714s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/arm_command.hpp
+[1.714s] -- Up-to-date: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces
+[1.714s] -- Up-to-date: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/msg
+[1.714s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/msg/rosidl_typesupport_fastrtps_cpp__visibility_control.h
+[1.714s] -- Up-to-date: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv
+[1.714s] -- Up-to-date: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/detail
+[1.714s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/detail/get_target_pose__rosidl_typesupport_fastrtps_cpp.hpp
+[1.714s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/detail/dds_fastrtps
+[1.714s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/detail/cargo__rosidl_typesupport_fastrtps_cpp.hpp
+[1.714s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/detail/arm_command__rosidl_typesupport_fastrtps_cpp.hpp
+[1.714s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/lib/libarm_interfaces__rosidl_typesupport_fastrtps_cpp.so
+[1.714s] -- Set runtime path of "/home/scr/robocup/amr_robot_ws/install/arm_interfaces/lib/libarm_interfaces__rosidl_typesupport_fastrtps_cpp.so" to ""
+[1.714s] -- Up-to-date: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces
+[1.714s] -- Up-to-date: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv
+[1.714s] -- Up-to-date: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/detail
+[1.714s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/detail/cargo__rosidl_typesupport_introspection_cpp.hpp
+[1.714s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/detail/arm_command__rosidl_typesupport_introspection_cpp.hpp
+[1.714s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/detail/cargo__type_support.cpp
+[1.714s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/detail/get_target_pose__type_support.cpp
+[1.714s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/detail/arm_command__type_support.cpp
+[1.714s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/include/arm_interfaces/arm_interfaces/srv/detail/get_target_pose__rosidl_typesupport_introspection_cpp.hpp
+[1.714s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/lib/libarm_interfaces__rosidl_typesupport_introspection_cpp.so
+[1.714s] -- Set runtime path of "/home/scr/robocup/amr_robot_ws/install/arm_interfaces/lib/libarm_interfaces__rosidl_typesupport_introspection_cpp.so" to ""
+[1.714s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/lib/libarm_interfaces__rosidl_typesupport_cpp.so
+[1.714s] -- Set runtime path of "/home/scr/robocup/amr_robot_ws/install/arm_interfaces/lib/libarm_interfaces__rosidl_typesupport_cpp.so" to ""
+[1.715s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/environment/pythonpath.sh
+[1.715s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/environment/pythonpath.dsv
+[1.715s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/local/lib/python3.10/dist-packages/arm_interfaces-0.0.0-py3.10.egg-info
+[1.715s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/local/lib/python3.10/dist-packages/arm_interfaces-0.0.0-py3.10.egg-info/dependency_links.txt
+[1.715s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/local/lib/python3.10/dist-packages/arm_interfaces-0.0.0-py3.10.egg-info/PKG-INFO
+[1.715s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/local/lib/python3.10/dist-packages/arm_interfaces-0.0.0-py3.10.egg-info/top_level.txt
+[1.715s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/local/lib/python3.10/dist-packages/arm_interfaces-0.0.0-py3.10.egg-info/SOURCES.txt
+[1.715s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/local/lib/python3.10/dist-packages/arm_interfaces
+[1.715s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/local/lib/python3.10/dist-packages/arm_interfaces/__init__.py
+[1.715s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/local/lib/python3.10/dist-packages/arm_interfaces/_arm_interfaces_s.ep.rosidl_typesupport_introspection_c.c
+[1.715s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/local/lib/python3.10/dist-packages/arm_interfaces/arm_interfaces_s__rosidl_typesupport_fastrtps_c.cpython-310-x86_64-linux-gnu.so
+[1.715s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/local/lib/python3.10/dist-packages/arm_interfaces/arm_interfaces_s__rosidl_typesupport_c.cpython-310-x86_64-linux-gnu.so
+[1.715s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/local/lib/python3.10/dist-packages/arm_interfaces/libarm_interfaces__rosidl_generator_py.so
+[1.715s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/local/lib/python3.10/dist-packages/arm_interfaces/_arm_interfaces_s.ep.rosidl_typesupport_fastrtps_c.c
+[1.715s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/local/lib/python3.10/dist-packages/arm_interfaces/_arm_interfaces_s.ep.rosidl_typesupport_c.c
+[1.715s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/local/lib/python3.10/dist-packages/arm_interfaces/srv
+[1.715s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/local/lib/python3.10/dist-packages/arm_interfaces/srv/__init__.py
+[1.716s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/local/lib/python3.10/dist-packages/arm_interfaces/srv/_arm_command_s.c
+[1.716s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/local/lib/python3.10/dist-packages/arm_interfaces/srv/_arm_command.py
+[1.716s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/local/lib/python3.10/dist-packages/arm_interfaces/srv/_cargo_s.c
+[1.716s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/local/lib/python3.10/dist-packages/arm_interfaces/srv/_get_target_pose_s.c
+[1.716s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/local/lib/python3.10/dist-packages/arm_interfaces/srv/_cargo.py
+[1.716s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/local/lib/python3.10/dist-packages/arm_interfaces/srv/_get_target_pose.py
+[1.716s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/local/lib/python3.10/dist-packages/arm_interfaces/arm_interfaces_s__rosidl_typesupport_introspection_c.cpython-310-x86_64-linux-gnu.so
+[1.732s] Listing '/home/scr/robocup/amr_robot_ws/install/arm_interfaces/local/lib/python3.10/dist-packages/arm_interfaces'...
+[1.732s] Compiling '/home/scr/robocup/amr_robot_ws/install/arm_interfaces/local/lib/python3.10/dist-packages/arm_interfaces/__init__.py'...
+[1.732s] Listing '/home/scr/robocup/amr_robot_ws/install/arm_interfaces/local/lib/python3.10/dist-packages/arm_interfaces/srv'...
+[1.732s] Compiling '/home/scr/robocup/amr_robot_ws/install/arm_interfaces/local/lib/python3.10/dist-packages/arm_interfaces/srv/__init__.py'...
+[1.732s] Compiling '/home/scr/robocup/amr_robot_ws/install/arm_interfaces/local/lib/python3.10/dist-packages/arm_interfaces/srv/_arm_command.py'...
+[1.732s] Compiling '/home/scr/robocup/amr_robot_ws/install/arm_interfaces/local/lib/python3.10/dist-packages/arm_interfaces/srv/_cargo.py'...
+[1.732s] Compiling '/home/scr/robocup/amr_robot_ws/install/arm_interfaces/local/lib/python3.10/dist-packages/arm_interfaces/srv/_get_target_pose.py'...
+[1.735s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/local/lib/python3.10/dist-packages/arm_interfaces/arm_interfaces_s__rosidl_typesupport_fastrtps_c.cpython-310-x86_64-linux-gnu.so
+[1.735s] -- Set runtime path of "/home/scr/robocup/amr_robot_ws/install/arm_interfaces/local/lib/python3.10/dist-packages/arm_interfaces/arm_interfaces_s__rosidl_typesupport_fastrtps_c.cpython-310-x86_64-linux-gnu.so" to ""
+[1.735s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/local/lib/python3.10/dist-packages/arm_interfaces/arm_interfaces_s__rosidl_typesupport_introspection_c.cpython-310-x86_64-linux-gnu.so
+[1.735s] -- Set runtime path of "/home/scr/robocup/amr_robot_ws/install/arm_interfaces/local/lib/python3.10/dist-packages/arm_interfaces/arm_interfaces_s__rosidl_typesupport_introspection_c.cpython-310-x86_64-linux-gnu.so" to ""
+[1.735s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/local/lib/python3.10/dist-packages/arm_interfaces/arm_interfaces_s__rosidl_typesupport_c.cpython-310-x86_64-linux-gnu.so
+[1.735s] -- Set runtime path of "/home/scr/robocup/amr_robot_ws/install/arm_interfaces/local/lib/python3.10/dist-packages/arm_interfaces/arm_interfaces_s__rosidl_typesupport_c.cpython-310-x86_64-linux-gnu.so" to ""
+[1.735s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/lib/libarm_interfaces__rosidl_generator_py.so
+[1.735s] -- Set runtime path of "/home/scr/robocup/amr_robot_ws/install/arm_interfaces/lib/libarm_interfaces__rosidl_generator_py.so" to ""
+[1.735s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/ament_index/resource_index/rust_packages/arm_interfaces
+[1.735s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/rust
+[1.735s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/rust/Cargo.toml
+[1.735s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/rust/build.rs
+[1.735s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/rust/src
+[1.735s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/rust/src/lib.rs
+[1.735s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/rust/src/srv.rs
+[1.735s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/rust/src/srv
+[1.735s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/rust/src/srv/rmw.rs
+[1.735s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/srv/ArmCommand.idl
+[1.735s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/srv/Cargo.idl
+[1.736s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/srv/GetTargetPose.idl
+[1.736s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/srv/ArmCommand.srv
+[1.736s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/srv/ArmCommand_Request.msg
+[1.736s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/srv/ArmCommand_Response.msg
+[1.736s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/srv/Cargo.srv
+[1.736s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/srv/Cargo_Request.msg
+[1.736s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/srv/Cargo_Response.msg
+[1.736s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/srv/GetTargetPose.srv
+[1.736s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/srv/GetTargetPose_Request.msg
+[1.736s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/srv/GetTargetPose_Response.msg
+[1.736s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/ament_index/resource_index/package_run_dependencies/arm_interfaces
+[1.736s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/ament_index/resource_index/parent_prefix_path/arm_interfaces
+[1.736s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/environment/ament_prefix_path.sh
+[1.736s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/environment/ament_prefix_path.dsv
+[1.736s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/environment/path.sh
+[1.736s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/environment/path.dsv
+[1.736s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/local_setup.bash
+[1.736s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/local_setup.sh
+[1.736s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/local_setup.zsh
+[1.736s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/local_setup.dsv
+[1.736s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/package.dsv
+[1.736s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/ament_index/resource_index/packages/arm_interfaces
+[1.736s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/cmake/export_arm_interfaces__rosidl_generator_cExport.cmake
+[1.736s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/cmake/export_arm_interfaces__rosidl_generator_cExport-noconfig.cmake
+[1.736s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/cmake/export_arm_interfaces__rosidl_typesupport_fastrtps_cExport.cmake
+[1.736s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/cmake/export_arm_interfaces__rosidl_typesupport_fastrtps_cExport-noconfig.cmake
+[1.736s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/cmake/arm_interfaces__rosidl_typesupport_introspection_cExport.cmake
+[1.736s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/cmake/arm_interfaces__rosidl_typesupport_introspection_cExport-noconfig.cmake
+[1.736s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/cmake/arm_interfaces__rosidl_typesupport_cExport.cmake
+[1.736s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/cmake/arm_interfaces__rosidl_typesupport_cExport-noconfig.cmake
+[1.736s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/cmake/export_arm_interfaces__rosidl_generator_cppExport.cmake
+[1.737s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/cmake/export_arm_interfaces__rosidl_typesupport_fastrtps_cppExport.cmake
+[1.737s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/cmake/export_arm_interfaces__rosidl_typesupport_fastrtps_cppExport-noconfig.cmake
+[1.737s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/cmake/arm_interfaces__rosidl_typesupport_introspection_cppExport.cmake
+[1.737s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/cmake/arm_interfaces__rosidl_typesupport_introspection_cppExport-noconfig.cmake
+[1.737s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/cmake/arm_interfaces__rosidl_typesupport_cppExport.cmake
+[1.737s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/cmake/arm_interfaces__rosidl_typesupport_cppExport-noconfig.cmake
+[1.737s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/cmake/export_arm_interfaces__rosidl_generator_pyExport.cmake
+[1.737s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/cmake/export_arm_interfaces__rosidl_generator_pyExport-noconfig.cmake
+[1.737s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/cmake/rosidl_cmake-extras.cmake
+[1.737s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/cmake/ament_cmake_export_include_directories-extras.cmake
+[1.737s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/cmake/ament_cmake_export_libraries-extras.cmake
+[1.737s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/cmake/ament_cmake_export_targets-extras.cmake
+[1.737s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/cmake/rosidl_cmake_export_typesupport_targets-extras.cmake
+[1.737s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/cmake/ament_cmake_export_dependencies-extras.cmake
+[1.737s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/cmake/rosidl_cmake_export_typesupport_libraries-extras.cmake
+[1.737s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/cmake/arm_interfacesConfig.cmake
+[1.737s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/cmake/arm_interfacesConfig-version.cmake
+[1.737s] -- Installing: /home/scr/robocup/amr_robot_ws/install/arm_interfaces/share/arm_interfaces/package.xml
+[1.738s] Invoked command in '/home/scr/robocup/amr_robot_ws/build/arm_interfaces' returned '0': CONDA_PROMPT_MODIFIER=(base) /usr/bin/cmake --install /home/scr/robocup/amr_robot_ws/build/arm_interfaces

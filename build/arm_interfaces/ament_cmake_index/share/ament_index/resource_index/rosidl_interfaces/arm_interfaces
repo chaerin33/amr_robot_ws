@@ -1,0 +1,12 @@
+srv/ArmCommand.idl
+srv/ArmCommand.srv
+srv/ArmCommand_Request.msg
+srv/ArmCommand_Response.msg
+srv/Cargo.idl
+srv/Cargo.srv
+srv/Cargo_Request.msg
+srv/Cargo_Response.msg
+srv/GetTargetPose.idl
+srv/GetTargetPose.srv
+srv/GetTargetPose_Request.msg
+srv/GetTargetPose_Response.msg

@@ -1,0 +1,25 @@
+// generated from rosidl_adapter/resource/srv.idl.em
+// with input from arm_interfaces/srv/ArmCommand.srv
+// generated code does not contain a copyright notice
+
+
+module arm_interfaces {
+  module srv {
+    struct ArmCommand_Request {
+      string action;
+
+      sequence<int32> object_ids;
+
+      string location;
+    };
+    struct ArmCommand_Response {
+      boolean success;
+
+      sequence<int32> slots;
+
+      sequence<int32> object_ids;
+
+      string message;
+    };
+  };
+};

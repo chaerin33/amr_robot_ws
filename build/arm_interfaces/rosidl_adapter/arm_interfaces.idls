@@ -1,0 +1,3 @@
+/home/scr/robocup/amr_robot_ws/build/arm_interfaces/rosidl_adapter/arm_interfaces:srv/ArmCommand.idl
+/home/scr/robocup/amr_robot_ws/build/arm_interfaces/rosidl_adapter/arm_interfaces:srv/Cargo.idl
+/home/scr/robocup/amr_robot_ws/build/arm_interfaces/rosidl_adapter/arm_interfaces:srv/GetTargetPose.idl

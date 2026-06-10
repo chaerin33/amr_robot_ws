@@ -1,0 +1,4 @@
+Invoking command in '/home/scr/robocup/amr_robot_ws/build/arm_interfaces': CONDA_PROMPT_MODIFIER=(base) /usr/bin/cmake --build /home/scr/robocup/amr_robot_ws/build/arm_interfaces -- -j24 -l24
+Invoked command in '/home/scr/robocup/amr_robot_ws/build/arm_interfaces' returned '0': CONDA_PROMPT_MODIFIER=(base) /usr/bin/cmake --build /home/scr/robocup/amr_robot_ws/build/arm_interfaces -- -j24 -l24
+Invoking command in '/home/scr/robocup/amr_robot_ws/build/arm_interfaces': CONDA_PROMPT_MODIFIER=(base) /usr/bin/cmake --install /home/scr/robocup/amr_robot_ws/build/arm_interfaces
+Invoked command in '/home/scr/robocup/amr_robot_ws/build/arm_interfaces' returned '0': CONDA_PROMPT_MODIFIER=(base) /usr/bin/cmake --install /home/scr/robocup/amr_robot_ws/build/arm_interfaces
