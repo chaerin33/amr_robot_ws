@@ -14,7 +14,6 @@ AMR 위에 탑재된 로봇팔의 LOAD / UNLOAD 동작을 제어하고,
 amr_robot_ws/src/
   arm_interfaces/            # 공용 서비스 인터페이스 패키지
     srv/
-      ArmCommand.srv         # 로봇팔 명령 인터페이스
       Cargo.srv              # 슬롯 상태 관리 인터페이스
       GetTargetPose.srv      # 비전 타겟 위치 인터페이스
 

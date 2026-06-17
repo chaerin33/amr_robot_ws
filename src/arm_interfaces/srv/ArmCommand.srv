@@ -1,8 +1,0 @@
-string action
-int32[] object_ids
-string location
----
-bool success
-int32[] slots
-int32[] object_ids
-string message
