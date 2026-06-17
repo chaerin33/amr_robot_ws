@@ -2,7 +2,8 @@ import rclpy
 from rclpy.node import Node
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.callback_groups import ReentrantCallbackGroup
-from arm_interfaces.srv import ArmCommand, Cargo, GetTargetPose
+from sml_msgs.srv import ArmCommand
+from arm_interfaces.srv import Cargo, GetTargetPose
 from std_srvs.srv import Trigger
 import rbpodo as rb
 import numpy as np
@@ -104,6 +105,7 @@ J_VEL, J_ACC = 255, 255
 L_VEL, L_ACC = 500, 800
 
 MATERIAL_NAMES = {
+    # --- Raw Materials ---
     1: "2x2_red",
     2: "2x2_green",
     3: "2x2_blue",
@@ -112,6 +114,18 @@ MATERIAL_NAMES = {
     6: "4x2_green",
     7: "4x2_blue",
     8: "4x2_yellow",
+    # --- Products ---
+    34: "battery",
+    13: "magnet",
+    81: "e_stop",
+    442: "carrot",
+    241: "traffic_light",
+    462: "small_tree",
+    711: "hammer",
+    4482: "big_carrot",
+    8518: "burger",
+    48132: "ice_cream",
+    46262: "big_tree",
 }
 
 
@@ -162,7 +176,7 @@ class AmrRobotNode(Node):
         self.cargo_client = self.create_client(
             Cargo, '/cargo', callback_group=self.cbg)
         self.srv = self.create_service(
-            ArmCommand, '/arm_command', self.arm_command_cb, callback_group=self.cbg)
+            ArmCommand, '/amr_robot_command', self.arm_command_cb, callback_group=self.cbg)
 
         self._busy_lock = threading.Lock()
         self._busy = False
