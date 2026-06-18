@@ -24,6 +24,10 @@ amr_robot_ws/src/
       gripper_node.py        # 그리퍼 제어 노드
 
   vision_pkg/                # 비전 패키지 (물체 위치 탐지)
+
+  amr_robot_launch/          # 전체 시스템 일괄 실행용 런치 패키지
+    launch/
+      amr_robot.launch.py    # vision/gripper/cargo/amr_robot 노드 동시 실행
 ```
 
 ---
@@ -117,17 +121,41 @@ source /opt/ros/humble/setup.bash
 source ~/robocup/amr_robot_ws/install/setup.bash
 ```
 
-**터미널 1 — 그리퍼 노드**
+### 방법 A. 런치 파일로 한 번에 실행 (권장)
+
+`amr_robot_launch` 패키지의 런치 파일이 아래 4개 노드를 한 터미널에서 모두 실행합니다:
+`vision_node`, `gripper_node`, `cargo_manager_node`, `amr_robot_node`.
+
+```bash
+ros2 launch amr_robot_launch amr_robot.launch.py
+```
+
+현재 로봇 IP(`10.0.2.8`), 그리퍼 시리얼 포트(`/dev/ttyARDUINO`) 등은
+코드에 하드코딩된 값을 그대로 사용하며, 런치 인자(argument)는 제공하지 않습니다.
+값을 바꿔야 하면 각 노드 코드를 직접 수정한 뒤 다시 빌드하세요.
+
+`Ctrl+C` 한 번으로 4개 노드가 모두 종료됩니다.
+
+### 방법 B. 노드별로 따로 실행 (디버깅용)
+
+개별 노드의 로그를 분리해서 보고 싶거나, 특정 노드만 재시작하고 싶을 때 사용하세요.
+
+**터미널 1 — 비전 노드**
+```bash
+ros2 run vision_pkg vision_node
+```
+
+**터미널 2 — 그리퍼 노드**
 ```bash
 ros2 run arm_controller_pkg gripper_node
 ```
 
-**터미널 2 — 슬롯 관리 노드**
+**터미널 3 — 슬롯 관리 노드**
 ```bash
 ros2 run arm_controller_pkg cargo_manager_node
 ```
 
-**터미널 3 — 로봇팔 제어 노드**
+**터미널 4 — 로봇팔 제어 노드**
 ```bash
 ros2 run arm_controller_pkg amr_robot_node
 ```
