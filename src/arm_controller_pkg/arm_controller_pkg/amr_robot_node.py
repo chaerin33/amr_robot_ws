@@ -2,8 +2,7 @@ import rclpy
 from rclpy.node import Node
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.callback_groups import ReentrantCallbackGroup
-from sml_msgs.srv import ArmCommand
-from arm_interfaces.srv import Cargo, GetTargetPose
+from arm_interfaces.srv import Cargo, GetTargetPose, ArmCommand
 from std_srvs.srv import Trigger
 import rbpodo as rb
 import numpy as np
@@ -182,7 +181,7 @@ class AmrRobotNode(Node):
         self.cargo_client = self.create_client(
             Cargo, '/cargo', callback_group=self.cbg)
         self.srv = self.create_service(
-            ArmCommand, '/amr_robot_command', self.arm_command_cb, callback_group=self.cbg)
+            ArmCommand, '/amr_robot_command', self.arm_robot_command_cb, callback_group=self.cbg)
 
         self._busy_lock = threading.Lock()
         self._busy = False
@@ -242,7 +241,7 @@ class AmrRobotNode(Node):
             req = GetTargetPose.Request()
             req.target_color = target_color
             req.target_size = ""
-            res = self.call_service(self.vision_client, req)
+            res = self.call_service(self.vision_client, req, timeout=30.0)
             if res and res.success:
                 return res
             self.get_logger().warn(f'[AMR] vision retry {i + 1}/{retries}')
@@ -462,7 +461,7 @@ class AmrRobotNode(Node):
 
     # --- 서비스 콜백 (LOAD / UNLOAD 분기) ---
 
-    def arm_command_cb(self, request, response):
+    def arm_robot_command_cb(self, request, response):
         response.slots = []
         response.object_ids = []
 
