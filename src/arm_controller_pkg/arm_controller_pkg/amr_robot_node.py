@@ -149,17 +149,18 @@ PRODUCT_VERIFY_VISION_RETRIES = 1
 # }
 
 # --- 제품별 파지 오프셋 (LOAD 전용) ---
-# YAW_OFFSET_DEG 와 같은 방식으로 object_id 별로 파지 보정을 따로 준다.
+# object_id 별로 파지 병진 보정을 따로 준다.
 # 비전이 준 좌표 위에 "더해지는" 추가 보정값. 전역 CAM/Z 오프셋은 그대로 두고
-# 제품마다 미세 보정만 얹는다. (yaw 가 p.yaw + offset 으로 더해지던 것과 동일 패턴)
+# 제품마다 미세 보정만 얹는다.
 #
 #   x   : 최종 접근 move_l_rel 의 tool x 병진에 더할 값 (mm)
 #   y   : 최종 접근 move_l_rel 의 tool y 병진에 더할 값 (mm)
 #   z   : 파지 깊이(tool z)에 더할 값 (mm, +면 더 깊이)
-#   yaw : 파지 회전(rz)에 더할 값 (deg)
 #
 # 생략한 키는 0. 테이블에 없는 object_id 도 전부 0.
-PICK_OFFSET_DEFAULT = {'x': 0.0, 'y': 0.0, 'z': 0.0, 'yaw': 0.0}
+# NOTE: 비전 패키지 업데이트로 장단축 구분이 사라져 yaw 보정은 더 이상 두지 않는다.
+#       파지 회전은 비전 절대각(p.yaw)을 그대로 손목에 준다 (정규화/대칭 접기 없음).
+PICK_OFFSET_DEFAULT = {'x': 0.0, 'y': 0.0, 'z': 0.0}
 
 PICK_OFFSET = {
     # --- Raw Materials ---
@@ -167,22 +168,22 @@ PICK_OFFSET = {
     2: {},  # 2x2_green
     3: {},  # 2x2_blue
     4: {},  # 2x2_yellow
-    5: {'yaw': 90.0},  # 4x2_red
-    6: {'yaw': 90.0},  # 4x2_green
-    7: {'yaw': 90.0},  # 4x2_blue
-    8: {'yaw': 90.0},  # 4x2_yellow
+    5: {},  # 4x2_red
+    6: {},  # 4x2_green
+    7: {},  # 4x2_blue
+    8: {},  # 4x2_yellow
     # --- Products ---
     34:    {},               # battery
     13:    {},               # magnet
-    81:    {'x': -10.0,'yaw': -90.0,'z': 10.0},   # e_stop
+    81:    {'x': -10.0, 'z': 10.0},   # e_stop
     442:   {},               # carrot
     241:   {},               # traffic_light
     462:   {'z': 10.0},               # small_tree
     711:   {'x': -10.0, 'z': 10.0},     # hammer 로봇베이스 기준 안쪽은 x+ 
     4482:  {'x': -10.0},               # big_carrot
-    8518:  {'z': 20.0,'yaw': -90.0},   # burger
+    8518:  {'z': 20.0},   # burger
     48132: {'z': 10.0},               # ice_cream
-    46262: {'z': 20.0},      # big_tree 벅서 빅트리 회전제한 -90~90
+    46262: {'z': 20.0},      # big_tree
 }
 
 
@@ -627,16 +628,16 @@ class AmrRobotNode(Node):
         dx = -(p.x * 1000.0) + CAM_Y_OFF
         dy = (p.y * 1000.0) + CAM_X_OFF
         z_move = (p.z * 1000.0) + Z_OFFSET
-        yaw = p.yaw + off['yaw']
+        yaw = p.yaw
 
         tool_x = dy + off['x']
         tool_y = dx + off['y']
         tool_z = (z_move - Z_MARGIN) + off['z']
 
-        if any(off[k] != 0.0 for k in ('x', 'y', 'z', 'yaw')):
+        if any(off[k] != 0.0 for k in ('x', 'y', 'z')):
             self.get_logger().info(
                 f'[AMR] {label_prefix} offset applied: object_id={object_id}, '
-                f'off={off}, vision_yaw={p.yaw:.2f} -> yaw={yaw:.2f}'
+                f'off={off}, vision_yaw(raw)={p.yaw:.2f}'
             )
 
         self._at_home = False
@@ -888,17 +889,18 @@ class AmrRobotNode(Node):
         #     label='yaw+xy+z approach',
         # ):
         #    NOTE: p.yaw 단위는 deg. 손목이 반대로 돌거나 단위가 rad이면 조정.
-        #    제품별 파지 보정(PICK_OFFSET)을 비전 좌표 위에 더한다.
-        yaw = p.yaw + off['yaw']
+        #    비전 절대각을 그대로 손목 rz 에 준다 (물체가 항상 위를 보도록
+        #    대칭 접기/정규화 없음). 병진(x/y/z)만 PICK_OFFSET 으로 미세 보정.
+        yaw = p.yaw
 
         tool_x = dy + off['x']
         tool_y = dx + off['y']
         tool_z = (z_move - Z_MARGIN) + off['z']
 
-        if any(off[k] != 0.0 for k in ('x', 'y', 'z', 'yaw')):
+        if any(off[k] != 0.0 for k in ('x', 'y', 'z')):
             self.get_logger().info(
                 f'[LOAD] pick offset applied: object_id={object_id}, '
-                f'off={off}, vision_yaw={p.yaw:.2f} -> yaw={yaw:.2f}')
+                f'off={off}, vision_yaw(raw)={p.yaw:.2f}')
 
         self._at_home = False  # 이 이동부터 HOME을 벗어남
         if not self.move_l_rel_checked(

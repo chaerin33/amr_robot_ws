@@ -2,6 +2,8 @@
 import rclpy
 from rclpy.node import Node
 from arm_interfaces.srv import GetTargetPose
+#from srvs_pkg.srv import GetTargetPose
+
 from vision_pkg import INUVisionCall as ivc
 
 class VisionNode(Node):
@@ -45,7 +47,7 @@ class VisionNode(Node):
                 response.x = float(result["x_mm"] / 1000.0)
                 response.y = float(result["y_mm"] / 1000.0)
                 response.z = float(result["z_mm"] / 1000.0)
-                response.yaw = float(result["yaw_deg"] )
+                response.yaw = float(result["yaw_deg"])
                 response.class_name = str(result["class_name"])
 
                 self.get_logger().info(
