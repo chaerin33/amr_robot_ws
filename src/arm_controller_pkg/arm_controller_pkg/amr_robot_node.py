@@ -95,6 +95,14 @@ DELIVERY_WAYPOINTS = {
     ],
 }
 
+# 완성품 unload 후 비전 검증용 조인트 포인트.
+# 실제 카메라가 내려놓은 완성품을 위에서 볼 수 있는 자세로 교체해서 사용한다.
+PRODUCT_VERIFY_WAYPOINTS = {
+    6: [
+        np.array([-88.55, 39.48, 126.07, -49.84, -63.94, 11.46]),
+    ],
+}
+
 # 완성품 층 그룹 — delivery 시 내려놓는 높이(z)가 그룹별로 다르다.
 PRODUCT_FLOOR_1   = {34, 13, 81}               # 1층:   배터리, 마그넷, 이스탑
 PRODUCT_FLOOR_2_5 = {442, 241, 462, 8518}      # 2층반: 당근, 신호등, 스몰트리, 버거
@@ -120,6 +128,8 @@ SCAN_Y_OFFSETS_MM = [0.0, 100.0, -100.0, 180.0, -180.0]
 SCAN_Y_AXIS_INDEX = 1
 SCAN_SETTLE_TIME_SEC = 0.3
 SCAN_VISION_RETRIES_PER_POSE = 1
+PRODUCT_VERIFY_SETTLE_TIME_SEC = 0.3
+PRODUCT_VERIFY_VISION_RETRIES = 1
 
 # # --- LOAD yaw(rz) 보정 상수 ---
 # # 특정 완성품은 파지 방향을 맞추기 위해 비전 yaw 에 고정 오프셋(deg)을 더한다.
@@ -559,6 +569,166 @@ class AmrRobotNode(Node):
         self.get_logger().info(f'[AMR] returned from delivery position {delivery_idx}')
         return True
 
+    def move_to_product_verify(self):
+        waypoints = PRODUCT_VERIFY_WAYPOINTS.get(PRODUCT_DELIVERY_IDX)
+        if waypoints is None:
+            self.get_logger().error('[AMR] no product verification waypoints')
+            return False
+
+        self._at_home = False
+        for idx, wp in enumerate(waypoints, start=1):
+            if not self.move_j_checked(wp, label=f'move_to_product_verify wp{idx}'):
+                return False
+
+        self.get_logger().info('[AMR] product verification position reached')
+        return True
+
+    def verify_product_unload(self, object_id):
+        if not self.move_to_product_verify():
+            return False
+
+        time.sleep(PRODUCT_VERIFY_SETTLE_TIME_SEC)
+        res = self.call_vision(str(object_id), retries=PRODUCT_VERIFY_VISION_RETRIES)
+
+        if res and res.success:
+            self.get_logger().error(
+                f'[UNLOAD VERIFY] object_id={object_id} still detected; treat as fail'
+            )
+            return False
+
+        self.get_logger().info(
+            f'[UNLOAD VERIFY] object_id={object_id} not detected; treat as success'
+        )
+        return True
+
+    def pick_from_floor_by_vision(self, object_id, label_prefix='pick'):
+        vision_target = str(object_id)
+
+        if not self.call_gripper(False):
+            return False
+
+        if not self.go_home():
+            return False
+
+        p = self.call_vision_with_y_scan(vision_target)
+        if not p:
+            self.get_logger().error(f'[AMR] vision failed during {label_prefix}')
+            self.go_home()
+            return False
+
+        off = get_pick_offset(object_id)
+        dx = -(p.x * 1000.0) + CAM_Y_OFF
+        dy = (p.y * 1000.0) + CAM_X_OFF
+        z_move = (p.z * 1000.0) + Z_OFFSET
+        yaw = p.yaw + off['yaw']
+
+        tool_x = dy + off['x']
+        tool_y = dx + off['y']
+        tool_z = (z_move - Z_MARGIN) + off['z']
+
+        if any(off[k] != 0.0 for k in ('x', 'y', 'z', 'yaw')):
+            self.get_logger().info(
+                f'[AMR] {label_prefix} offset applied: object_id={object_id}, '
+                f'off={off}, vision_yaw={p.yaw:.2f} -> yaw={yaw:.2f}'
+            )
+
+        self._at_home = False
+        if not self.move_l_rel_checked(
+            [tool_x, tool_y, tool_z, 0.0, 0.0, yaw],
+            label=f'{label_prefix} yaw+xy+z approach',
+        ):
+            self.go_home()
+            return False
+
+        if not self.move_l_rel_checked(
+            [0.0, 0.0, Z_MARGIN, 0.0, 0.0, 0.0],
+            label=f'{label_prefix} z final approach',
+        ):
+            self.go_home()
+            return False
+        time.sleep(0.5)
+
+        if not self.call_gripper(True):
+            self.get_logger().error(f'[AMR] {label_prefix} grip failed')
+            self.move_l_rel_checked(
+                [0.0, 0.0, -100.0, 0.0, 0.0, 0.0],
+                label=f'{label_prefix} retreat after grip failure',
+            )
+            self.go_home()
+            return False
+
+        if not self.move_l_rel_checked(
+            [0.0, 0.0, -50.0, 0.0, 0.0, 0.0],
+            label=f'{label_prefix} lift after grip',
+        ):
+            self.go_home()
+            return False
+
+        return True
+
+    def place_at_delivery(self, object_id, delivery_idx, is_product):
+        if not self.move_to_delivery(delivery_idx):
+            self.go_home()
+            return False
+
+        if is_product:
+            z_down, z_up = self.product_delivery_z(object_id)
+            delivery_ref = rb.ReferenceFrame.Base
+            delivery_down = [0.0, 0.0, -z_down, 0.0, 0.0, 0.0]
+            delivery_up = [0.0, 0.0, -z_up, 0.0, 0.0, 0.0]
+        else:
+            delivery_ref = rb.ReferenceFrame.Tool
+            delivery_down = [0.0, 0.0, UNLOAD_Z_DOWN_MM, 0.0, 0.0, 0.0]
+            delivery_up = [0.0, 0.0, UNLOAD_Z_UP_MM, 0.0, 0.0, 0.0]
+
+        if not self.move_l_rel_checked(
+            delivery_down,
+            label='delivery z down',
+            ref_frame=delivery_ref,
+        ):
+            self.go_home()
+            return False
+
+        if not self.call_gripper(False):
+            self.get_logger().error('[AMR] final gripper open failed')
+            self.move_l_rel_checked(
+                delivery_up,
+                label='retreat after delivery open failure',
+                ref_frame=delivery_ref,
+            )
+            self.go_home()
+            return False
+
+        if not self.move_l_rel_checked(
+            delivery_up,
+            label='delivery z up',
+            ref_frame=delivery_ref,
+        ):
+            self.go_home()
+            return False
+
+        return True
+
+    def retry_product_unload_recovery(self, object_id):
+        self.get_logger().warn(
+            f'[UNLOAD VERIFY] recovery start: object_id={object_id}'
+        )
+
+        if not self.pick_from_floor_by_vision(object_id, label_prefix='recovery'):
+            return False
+
+        if not self.go_home():
+            return False
+
+        if not self.place_at_delivery(
+            object_id,
+            PRODUCT_DELIVERY_IDX,
+            is_product=True,
+        ):
+            return False
+
+        return True
+
     # --- 서비스 콜백 (LOAD / UNLOAD 분기) ---
 
     def arm_robot_command_cb(self, request, response):
@@ -995,71 +1165,33 @@ class AmrRobotNode(Node):
         # 9. 배달 위치로 이동
         #    완성품은 처리 순서(delivery_idx)와 무관하게 항상 6번 포인트로 간다.
         target_delivery_idx = PRODUCT_DELIVERY_IDX if is_product else delivery_idx
-        if not self.move_to_delivery(target_delivery_idx):
+        if not self.place_at_delivery(object_id, target_delivery_idx, is_product):
             self.go_home()
             return {
                 'success': False,
                 'slot': slot,
                 'object_id': object_id,
-                'message': 'move to delivery failed',
+                'message': 'delivery placement failed',
             }
 
-        # 10. Z 하강 -> open -> Z 상승
-        #     완성품: 6번 포인트는 손목이 꺾여 Tool z축이 수직이 아니므로,
-        #             Base 프레임(= 중력 방향)으로 수직 하강/상승한다.
-        #             Base z+ 가 위쪽이라 Tool 기준 부호와 반대 -> 반전해서 사용.
-        #             (product_delivery_z 의 down=양수 깊이 -> Base 에선 -z 로 하강)
-        #     재료:   기존대로 Tool 프레임 그대로.
-        if is_product:
-            z_down, z_up = self.product_delivery_z(object_id)
-            delivery_ref = rb.ReferenceFrame.Base
-            delivery_down = [0.0, 0.0, -z_down, 0.0, 0.0, 0.0]
-            delivery_up   = [0.0, 0.0, -z_up,   0.0, 0.0, 0.0]
-        else:
-            delivery_ref = rb.ReferenceFrame.Tool
-            delivery_down = [0.0, 0.0, UNLOAD_Z_DOWN_MM, 0.0, 0.0, 0.0]
-            delivery_up   = [0.0, 0.0, UNLOAD_Z_UP_MM,   0.0, 0.0, 0.0]
+        if is_product and not self.verify_product_unload(object_id):
+            if not self.retry_product_unload_recovery(object_id):
+                self.go_home()
+                return {
+                    'success': False,
+                    'slot': slot,
+                    'object_id': object_id,
+                    'message': 'product unload recovery failed',
+                }
 
-        if not self.move_l_rel_checked(
-            delivery_down,
-            label='delivery z down',
-            ref_frame=delivery_ref,
-        ):
-            self.go_home()
-            return {
-                'success': False,
-                'slot': slot,
-                'object_id': object_id,
-                'message': 'delivery z down failed',
-            }
-
-        if not self.call_gripper(False):
-            self.get_logger().error('[AMR] final gripper open failed')
-            self.move_l_rel_checked(
-                delivery_up,
-                label='retreat after delivery open failure',
-                ref_frame=delivery_ref,
-            )
-            self.go_home()
-            return {
-                'success': False,
-                'slot': slot,
-                'object_id': object_id,
-                'message': 'final gripper open failed',
-            }
-
-        if not self.move_l_rel_checked(
-            delivery_up,
-            label='delivery z up',
-            ref_frame=delivery_ref,
-        ):
-            self.go_home()
-            return {
-                'success': False,
-                'slot': slot,
-                'object_id': object_id,
-                'message': 'delivery z up failed',
-            }
+            if not self.verify_product_unload(object_id):
+                self.go_home()
+                return {
+                    'success': False,
+                    'slot': slot,
+                    'object_id': object_id,
+                    'message': 'product unload verification failed after recovery',
+                }
 
         # 11. 웨이포인트 역순으로 홈 복귀
         if not self.return_from_delivery(target_delivery_idx):
