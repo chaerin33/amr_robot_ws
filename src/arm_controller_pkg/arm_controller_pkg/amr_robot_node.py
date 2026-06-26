@@ -104,11 +104,7 @@ DELIVERY_WAYPOINTS = {
 
 # 완성품 unload 후 비전 검증용 조인트 포인트.
 # 실제 카메라가 내려놓은 완성품을 위에서 볼 수 있는 자세로 교체해서 사용한다.
-PRODUCT_VERIFY_WAYPOINTS = {
-    6: [
-        np.array([-88.55, 39.48, 126.07, -49.84, -63.94, 11.46]),
-    ],
-}
+PRODUCT_VERIFY_WAYPOINTS = { 6: [ np.array([-61.89, 12.56, 94.17, 0, 73.27, 28.11]), ], }
 
 # 완성품 층 그룹 — delivery 시 내려놓는 높이(z)가 그룹별로 다르다.
 PRODUCT_FLOOR_1   = {34, 13, 81}               # 1층:   배터리, 마그넷, 이스탑
@@ -722,12 +718,11 @@ class AmrRobotNode(Node):
             f'[UNLOAD VERIFY] recovery start: object_id={object_id}'
         )
 
-        if not self.pick_from_floor_by_vision(object_id, label_prefix='recovery'):
+        # 1. 홈 복귀가 생략되고 Yaw를 먼저 돌리는 복구 전용 픽업 호출
+        if not self.recovery_pick_by_vision(object_id, label_prefix='recovery'):
             return False
 
-        if not self.go_home():
-            return False
-
+        # 2. 홈이나 카고를 들리지 않고 바로 배송 위치로 다이렉트 이동 및 하역
         if not self.place_at_delivery(
             object_id,
             PRODUCT_DELIVERY_IDX,
@@ -735,6 +730,88 @@ class AmrRobotNode(Node):
         ):
             return False
 
+        return True
+    
+    def recovery_pick_by_vision(self, object_id, label_prefix='recovery'):
+        vision_target = str(object_id)
+
+        # 1. 그리퍼 열기
+        if not self.call_gripper(False):
+            return False
+
+        # [수정 포인트] go_home() 삭제됨. 현재 검증(Verify) 위치에서 바로 비전 탐색 진행
+
+        # 2. 비전 탐색
+        p = self.call_vision_with_y_scan(vision_target)
+        if not p:
+            self.get_logger().error(f'[AMR] vision failed during {label_prefix}')
+            return False
+
+        # 3. 좌표 및 오프셋 계산
+        off = get_pick_offset(object_id)
+        dx = -(p.x * 1000.0) + CAM_Y_OFF
+        dy = (p.y * 1000.0) + CAM_X_OFF
+        z_move = (p.z * 1000.0) + Z_OFFSET
+        yaw = p.yaw
+
+        tool_x = dy + off['x']
+        tool_y = dx + off['y']
+        tool_z = (z_move - Z_MARGIN) + off['z']
+
+        if any(off[k] != 0.0 for k in ('x', 'y', 'z')):
+            self.get_logger().info(
+                f'[AMR] {label_prefix} offset applied: object_id={object_id}, '
+                f'off={off}, vision_yaw(raw)={p.yaw:.2f}'
+            )
+
+        self._at_home = False
+
+        # --- [수정 포인트] yaw 먼저 돌리고 xyz 이동 ---
+        # 4. yaw 회전 선행
+        if not self.move_l_rel_checked(
+            [0.0, 0.0, 0.0, 0.0, 0.0, yaw],
+            label=f'{label_prefix} yaw approach first',
+        ):
+            return False
+
+        # Tool 좌표계가 yaw만큼 돌아갔으므로, 기존 카메라 기준의 x, y 이동량도 회전 변환 적용
+        yaw_rad = np.radians(yaw)
+        adj_tool_x = tool_x * np.cos(yaw_rad) + tool_y * np.sin(yaw_rad)
+        adj_tool_y = -tool_x * np.sin(yaw_rad) + tool_y * np.cos(yaw_rad)
+
+        # 5. 보정된 x, y, z(안전 마진까지) 대각선 하강
+        if not self.move_l_rel_checked(
+            [adj_tool_x, adj_tool_y, tool_z, 0.0, 0.0, 0.0],
+            label=f'{label_prefix} xy+z approach',
+        ):
+            return False
+        # ---------------------------------------------
+
+        # 6. 최종 수직 하강
+        if not self.move_l_rel_checked(
+            [0.0, 0.0, Z_MARGIN, 0.0, 0.0, 0.0],
+            label=f'{label_prefix} z final approach',
+        ):
+            return False
+        time.sleep(0.5)
+
+        # 7. 그리퍼 닫기 (파지)
+        if not self.call_gripper(True):
+            self.get_logger().error(f'[AMR] {label_prefix} grip failed')
+            self.move_l_rel_checked(
+                [0.0, 0.0, -100.0, 0.0, 0.0, 0.0],
+                label=f'{label_prefix} retreat after grip failure',
+            )
+            return False
+
+        # 8. 위로 들어 올리기 (Lift)
+        if not self.move_l_rel_checked(
+            [0.0, 0.0, -50.0, 0.0, 0.0, 0.0],
+            label=f'{label_prefix} lift after grip',
+        ):
+            return False
+
+        # [수정 포인트] 끝난 후 go_home() 삭제됨. 들어 올린 상태로 리턴.
         return True
 
     # --- 서비스 콜백 (LOAD / UNLOAD 분기) ---
