@@ -34,7 +34,7 @@ SLOT_WAYPOINTS = {
         np.array([-160.24, -33.11, 115.37, 0.0, 97.76, 0.0]),
         np.array([-220.0, -11.96, 57.40, 0.0, 100.40, 0.0]),
         np.array([-250.0, -11.96, 57.40, 0.0, 100.40, 0.0]),
-        np.array([-266.73, 9.62, 46.62, -1.82, 116.78, 2.62]),
+        np.array([-266.73, 12.15, 40.53, -1.88, 120.34, 2.49]),
     ],
     3: [
         np.array([-90.0, 0.0, 90.0, 0.0, 90.0, 0.0]),
@@ -42,7 +42,7 @@ SLOT_WAYPOINTS = {
         np.array([-160.24, -33.11, 115.37, 0.0, 97.76, 0.0]),
         np.array([-220.0, -11.96, 57.40, 0.0, 100.40, 0.0]),
         np.array([-250.0, -11.96, 57.40, 0.0, 100.40, 0.0]),
-        np.array([-254.05, 12.14, 43.94, -3.51, 117.43, 14.43]),
+        np.array([-254.05, 14.83, 37.52, -3.64, 121.15, 14.16]),
     ],
     4: [
         np.array([-90.0, 0.0, 90.0, 0.0, 90.0, 0.0]),
@@ -50,31 +50,30 @@ SLOT_WAYPOINTS = {
         np.array([-160.24, -33.11, 115.37, 0.0, 97.76, 0.0]),
         np.array([-220.0, -11.96, 57.40, 0.0, 100.40, 0.0]),
         np.array([-250.0, -11.96, 57.40, 0.0, 100.40, 0.0]),
-        np.array([-243.17, 18.56, 36.13, -4.91, 119.49, 24.47]),
+        np.array([-243.17, 21.99, 28.30, -6.83, 123.86, 23.87]),
     ],
     5: [
         np.array([-90.0, 0.0, 90.0, 0.0, 90.0, 0.0]),
         np.array([-90.0, -20.81, 107.71, 0.0, 93.11, 0.0]),
         np.array([-160.24, -33.11, 115.37, 0.0, 97.76, 0.0]),
         np.array([-220.0, -11.96, 57.40, 0.0, 100.40, 0.0]),
-        np.array([-237.9, 2.79, 53.84, 0.0, 123.36, 32.1]),
+        np.array([-237.90, 5.0, 48.42, 0.0, 126.56, 32.10]),
     ],
     6: [
         np.array([-90.0, 0.0, 90.0, 0.0, 90.0, 0.0]),
         np.array([-90.0, -20.81, 107.71, 0.0, 93.11, 0.0]),
         np.array([-160.24, -33.11, 115.37, 0.0, 97.76, 0.0]),
         np.array([-220.0, -11.96, 57.40, 0.0, 100.40, 0.0]),
-        np.array([-251.34, -2.69, 59.32, 0.0, 123.35, 18.67]),
+        np.array([-251.34, -0.64, 54.28, 0.0, 126.33, 18.67]),
     ],
     7: [
         np.array([-90.0, 0.0, 90.0, 0.0, 90.0, 0.0]),
         np.array([-90.0, -20.81, 107.71, 0.0, 93.11, 0.0]),
         np.array([-160.24, -33.11, 115.37, 0.0, 97.76, 0.0]),
         np.array([-220.0, -11.96, 57.40, 0.0, 100.40, 0.0]),
-        np.array([-267.6, -4.89, 61.37, 0.0, 123.5, 2.42]),
+        np.array([-267.6, -2.88, 56.45, 0.0, 126.41, 2.42]),
     ],
 }
-
 # 인덱스 0~5: 내려놓는 순서에 따라 사용 (unload 전용)
 DELIVERY_WAYPOINTS = {
     0: [
@@ -104,7 +103,11 @@ DELIVERY_WAYPOINTS = {
 
 # 완성품 unload 후 비전 검증용 조인트 포인트.
 # 실제 카메라가 내려놓은 완성품을 위에서 볼 수 있는 자세로 교체해서 사용한다.
-PRODUCT_VERIFY_WAYPOINTS = { 6: [ np.array([-61.89, 12.56, 94.17, 0, 73.27, 28.11]), ], }
+PRODUCT_VERIFY_WAYPOINTS = {
+    6: [
+        np.array([-61.89, 12.56, 94.17, 0, 73.27, 28.11]),
+    ],
+}
 
 # 완성품 층 그룹 — delivery 시 내려놓는 높이(z)가 그룹별로 다르다.
 PRODUCT_FLOOR_1   = {34, 13, 81}               # 1층:   배터리, 마그넷, 이스탑
@@ -133,6 +136,9 @@ SCAN_SETTLE_TIME_SEC = 0.3
 SCAN_VISION_RETRIES_PER_POSE = 1
 PRODUCT_VERIFY_SETTLE_TIME_SEC = 0.3
 PRODUCT_VERIFY_VISION_RETRIES = 1
+# 파지(grip) 직전, 이동 정지 후 기계 진동이 잦아들 시간(초). 최소값으로 잡음.
+# 0 에 가까울수록 빠르지만, 흔들리는 중에 잡으면 파지 실패 위험 -> 0.05~0.1 권장.
+GRIP_SETTLE_TIME_SEC = 0.1
 
 # # --- LOAD yaw(rz) 보정 상수 ---
 # # 특정 완성품은 파지 방향을 맞추기 위해 비전 yaw 에 고정 오프셋(deg)을 더한다.
@@ -145,18 +151,17 @@ PRODUCT_VERIFY_VISION_RETRIES = 1
 # }
 
 # --- 제품별 파지 오프셋 (LOAD 전용) ---
-# object_id 별로 파지 병진 보정을 따로 준다.
+# YAW_OFFSET_DEG 와 같은 방식으로 object_id 별로 파지 보정을 따로 준다.
 # 비전이 준 좌표 위에 "더해지는" 추가 보정값. 전역 CAM/Z 오프셋은 그대로 두고
-# 제품마다 미세 보정만 얹는다.
+# 제품마다 미세 보정만 얹는다. (yaw 가 p.yaw + offset 으로 더해지던 것과 동일 패턴)
 #
 #   x   : 최종 접근 move_l_rel 의 tool x 병진에 더할 값 (mm)
 #   y   : 최종 접근 move_l_rel 의 tool y 병진에 더할 값 (mm)
 #   z   : 파지 깊이(tool z)에 더할 값 (mm, +면 더 깊이)
+#   yaw : 파지 회전(rz)에 더할 값 (deg)
 #
 # 생략한 키는 0. 테이블에 없는 object_id 도 전부 0.
-# NOTE: 비전 패키지 업데이트로 장단축 구분이 사라져 yaw 보정은 더 이상 두지 않는다.
-#       파지 회전은 비전 절대각(p.yaw)을 그대로 손목에 준다 (정규화/대칭 접기 없음).
-PICK_OFFSET_DEFAULT = {'x': 0.0, 'y': 0.0, 'z': 0.0}
+PICK_OFFSET_DEFAULT = {'x': 0.0, 'y': 0.0, 'z': 0.0, 'yaw': 0.0}
 
 PICK_OFFSET = {
     # --- Raw Materials ---
@@ -164,22 +169,22 @@ PICK_OFFSET = {
     2: {},  # 2x2_green
     3: {},  # 2x2_blue
     4: {},  # 2x2_yellow
-    5: {},  # 4x2_red
-    6: {},  # 4x2_green
-    7: {},  # 4x2_blue
-    8: {},  # 4x2_yellow
+    5: {'yaw': 90.0},  # 4x2_red
+    6: {'yaw': 90.0},  # 4x2_green
+    7: {'yaw': 90.0},  # 4x2_blue
+    8: {'yaw': 90.0},  # 4x2_yellow
     # --- Products ---
     34:    {},               # battery
     13:    {},               # magnet
-    81:    {'x': -10.0, 'z': 10.0},   # e_stop
+    81:    {'x': -10.0,'yaw': -90.0,'z': 10.0},   # e_stop
     442:   {},               # carrot
     241:   {},               # traffic_light
     462:   {'z': 10.0},               # small_tree
     711:   {'x': -10.0, 'z': 10.0},     # hammer 로봇베이스 기준 안쪽은 x+ 
     4482:  {'x': -10.0},               # big_carrot
-    8518:  {'z': 20.0},   # burger
+    8518:  {'z': 20.0,'yaw': -90.0},   # burger
     48132: {'z': 10.0},               # ice_cream
-    46262: {'z': 20.0},      # big_tree
+    46262: {'z': 20.0},      # big_tree 벅서 빅트리 회전제한 -90~90
 }
 
 
@@ -206,8 +211,19 @@ PRODUCT_FLOOR_2_Z_DOWN_MM   = 80.0    # 2층
 PRODUCT_FLOOR_2_Z_UP_MM     = -80.0
 
 
-J_VEL, J_ACC = 255, 255
-L_VEL, L_ACC = 500, 800
+# --- 모션 속도/가속 (이 4개 숫자가 로봇팔 속도를 전부 결정한다) ---
+# move_j : J_VEL=deg/s,  J_ACC=deg/s^2   (관절 이동: 슬롯/홈/배달 등 긴 이동)
+# move_l : L_VEL=mm/s,   L_ACC=mm/s^2    (직선 이동: 비전 접근/하강/상승 등)
+#
+# 값이 클수록 빠르다. 아래는 "빠르게" 세팅이다.
+# 만약 너무 거칠거나(덜컹/오버슈트) 물건을 놓치면 숫자를 낮추면 된다.
+#   - 더 빠르게 : J 500/1200, L 800/2000   (관절은 로봇 물리 한계에서 멈춤)
+#   - 빠르게    : J 400/1000, L 700/1500    <- 현재값
+#   - 보통      : J 300/600,  L 500/1000
+#   - 느리게    : J 200/400,  L 400/800
+# (가속 J_ACC 가 짧은 이동 속도를 가장 크게 좌우한다. 더 빠르게 하려면 J_ACC 먼저 올릴 것)
+J_VEL, J_ACC = 400, 1000
+L_VEL, L_ACC = 700, 1500
 
 MATERIAL_NAMES = {
     # --- Raw Materials ---
@@ -624,16 +640,16 @@ class AmrRobotNode(Node):
         dx = -(p.x * 1000.0) + CAM_Y_OFF
         dy = (p.y * 1000.0) + CAM_X_OFF
         z_move = (p.z * 1000.0) + Z_OFFSET
-        yaw = p.yaw
+        yaw = p.yaw + off['yaw']
 
         tool_x = dy + off['x']
         tool_y = dx + off['y']
         tool_z = (z_move - Z_MARGIN) + off['z']
 
-        if any(off[k] != 0.0 for k in ('x', 'y', 'z')):
+        if any(off[k] != 0.0 for k in ('x', 'y', 'z', 'yaw')):
             self.get_logger().info(
                 f'[AMR] {label_prefix} offset applied: object_id={object_id}, '
-                f'off={off}, vision_yaw(raw)={p.yaw:.2f}'
+                f'off={off}, vision_yaw={p.yaw:.2f} -> yaw={yaw:.2f}'
             )
 
         self._at_home = False
@@ -650,7 +666,7 @@ class AmrRobotNode(Node):
         ):
             self.go_home()
             return False
-        time.sleep(0.5)
+        time.sleep(GRIP_SETTLE_TIME_SEC)
 
         if not self.call_gripper(True):
             self.get_logger().error(f'[AMR] {label_prefix} grip failed')
@@ -718,7 +734,7 @@ class AmrRobotNode(Node):
             f'[UNLOAD VERIFY] recovery start: object_id={object_id}'
         )
 
-        # 1. 홈 복귀가 생략되고 Yaw를 먼저 돌리는 복구 전용 픽업 호출
+        #1. 홈 복귀가 생략되고 Yaw를 먼저 돌리는 복구 전용 픽업 호출
         if not self.recovery_pick_by_vision(object_id, label_prefix='recovery'):
             return False
 
@@ -733,6 +749,7 @@ class AmrRobotNode(Node):
         return True
     
     def recovery_pick_by_vision(self, object_id, label_prefix='recovery'):
+
         vision_target = str(object_id)
 
         # 1. 그리퍼 열기
@@ -793,7 +810,7 @@ class AmrRobotNode(Node):
             label=f'{label_prefix} z final approach',
         ):
             return False
-        time.sleep(0.5)
+        time.sleep(GRIP_SETTLE_TIME_SEC)
 
         # 7. 그리퍼 닫기 (파지)
         if not self.call_gripper(True):
@@ -966,18 +983,17 @@ class AmrRobotNode(Node):
         #     label='yaw+xy+z approach',
         # ):
         #    NOTE: p.yaw 단위는 deg. 손목이 반대로 돌거나 단위가 rad이면 조정.
-        #    비전 절대각을 그대로 손목 rz 에 준다 (물체가 항상 위를 보도록
-        #    대칭 접기/정규화 없음). 병진(x/y/z)만 PICK_OFFSET 으로 미세 보정.
-        yaw = p.yaw
+        #    제품별 파지 보정(PICK_OFFSET)을 비전 좌표 위에 더한다.
+        yaw = p.yaw + off['yaw']
 
         tool_x = dy + off['x']
         tool_y = dx + off['y']
         tool_z = (z_move - Z_MARGIN) + off['z']
 
-        if any(off[k] != 0.0 for k in ('x', 'y', 'z')):
+        if any(off[k] != 0.0 for k in ('x', 'y', 'z', 'yaw')):
             self.get_logger().info(
                 f'[LOAD] pick offset applied: object_id={object_id}, '
-                f'off={off}, vision_yaw(raw)={p.yaw:.2f}')
+                f'off={off}, vision_yaw={p.yaw:.2f} -> yaw={yaw:.2f}')
 
         self._at_home = False  # 이 이동부터 HOME을 벗어남
         if not self.move_l_rel_checked(
@@ -1005,7 +1021,7 @@ class AmrRobotNode(Node):
                 'object_id': object_id,
                 'message': 'z final approach failed',
             }
-        time.sleep(0.5)
+        time.sleep(GRIP_SETTLE_TIME_SEC)
 
         # 6. 그리퍼 grip
         if not self.call_gripper(True):
@@ -1117,19 +1133,29 @@ class AmrRobotNode(Node):
 
     def sequence_unload_multi(self, object_ids):
         results = []
+        last_idx = len(object_ids) - 1
         for idx, object_id in enumerate(object_ids):
-            result = self.sequence_unload(object_id, idx)
+            is_last = (idx == last_idx)
+            result = self.sequence_unload(object_id, idx, is_last=is_last)
             results.append(result)
             if not result['success']:
                 self.get_logger().error(f'[AMR] unload failed at object_id={object_id}, stopping')
                 break
-        # 모든 물체 처리(또는 중단) 후 HOME을 거쳐 이동 포즈로 전환한다.
-        # 직전 물체에서 이미 HOME에 와 있으면 _at_home 플래그로 즉시 스킵된다.
-        self.go_home()
+
+        # 마지막 물체까지 정상 처리된 경우:
+        #   마지막 sequence_unload 가 is_last=True 로 step12 의 HOME 복귀를 건너뛰었다.
+        #   요청대로 HOME 조인트(-90,0,90,0,90,0)를 거치지 않고, 현재 자세에서
+        #   곧장 이동 포즈로 보낸다 (단일 move_j).
+        # 중간에 실패해 break 한 경우엔 위치가 불확실하므로 안전하게 HOME 을 경유한다.
+        all_ok = bool(results) and all(r['success'] for r in results)
+        if all_ok:
+            self.get_logger().info('[AMR] last unload done: skip HOME, go straight to moving pose')
+        else:
+            self.go_home()
         self.go_moving_pose()
         return results
 
-    def sequence_unload(self, object_id, delivery_idx):
+    def sequence_unload(self, object_id, delivery_idx, is_last=False):
         if not self.is_robot_ready():
             return {
                 'success': False,
@@ -1291,13 +1317,19 @@ class AmrRobotNode(Node):
         # 12. delivery 자세에서 곧장 다음 물체로 가면 큰 단일 관절 이동이 생겨
         #     느리므로, 물체 1개 처리가 끝날 때마다 HOME으로 복귀해 둔다.
         #     (다음 sequence_unload의 go_home()은 _at_home 플래그로 즉시 스킵된다.)
-        if not self.go_home():
-            return {
-                'success': False,
-                'slot': slot,
-                'object_id': object_id,
-                'message': 'go_home after delivery failed',
-            }
+        #     단, 마지막 물체(is_last)면 HOME 을 거치지 않고 호출부에서 곧장
+        #     이동 포즈로 보내므로 여기서 go_home 을 스킵한다.
+        if not is_last:
+            if not self.go_home():
+                return {
+                    'success': False,
+                    'slot': slot,
+                    'object_id': object_id,
+                    'message': 'go_home after delivery failed',
+                }
+        else:
+            self.get_logger().info(
+                '[UNLOAD] last object: skip go_home (will go straight to moving pose)')
 
         self.get_logger().info(
             f'[UNLOAD DONE] object_id={object_id}, slot={slot}, delivery_idx={delivery_idx}'
