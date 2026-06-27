@@ -272,6 +272,7 @@ class AmrRobotNode(Node):
             self.rc = rb.ResponseCollector()
             self.robot.set_operation_mode(self.rc, rb.OperationMode.Real)
             self.robot.set_speed_bar(self.rc, 1.0)
+            self.robot.set_speed_multiplier(self.rc, 1.0)
             self.robot_ready = True
             self.get_logger().info('[AMR] robot connected')
         except Exception as e:
