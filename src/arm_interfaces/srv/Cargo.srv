@@ -5,4 +5,5 @@ int32 station_id
 ---
 bool success
 int32 slot
+int32 layer_index
 string message
