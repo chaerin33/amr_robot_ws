@@ -27,7 +27,7 @@ VISION_LOAD_JOINT_DEG = np.array([-90.0,  13.28,  75.45, 0.0, 91.27, 0.0])
 SLOT_COMMON_WPS = [
     np.array([-90.0,    13.70,   69.94, 0.0,  96.36,  0.0]),
     np.array([-90.0,   -20.81,  107.71, 0.0,  93.11,  0.0]),
-    np.array([-160.24, -33.11,  115.37, 0.0,  97.76,  0.0]),
+    np.array([-160.21, -8.27,  125.95, 0.46,  60.24,  0.0]),
     np.array([-220.0,  -11.96,   57.40, 0.0, 100.40,  0.0]),
 ]
 
@@ -113,6 +113,7 @@ SCAN_Y_OFFSETS_MM = [0.0, 200.0, -200.0]
 SCAN_Y_AXIS_INDEX = 1
 SCAN_SETTLE_TIME_SEC = 0.3
 SCAN_VISION_RETRIES_PER_POSE = 3
+SCAN_MAX_CYCLES = 3
 PRODUCT_VERIFY_SETTLE_TIME_SEC = 0.3
 PRODUCT_VERIFY_VISION_RETRIES = 1
 # 파지(grip) 직전, 이동 정지 후 기계 진동이 잦아들 시간(초). 최소값으로 잡음.
@@ -436,33 +437,37 @@ class AmrRobotNode(Node):
     def call_vision_with_y_scan(self, target_color):
         current_y_offset = 0.0
 
-        for target_y_offset in SCAN_Y_OFFSETS_MM:
-            delta_y = target_y_offset - current_y_offset
-            if abs(delta_y) > 1e-6:
-                if not self.move_l_rel_checked(
-                    self._scan_y_delta(delta_y),
-                    label=f'scan y offset {target_y_offset:.0f}mm',
-                ):
-                    self.get_logger().error(
-                        f'[AMR] scan move failed: y={target_y_offset:.0f}mm')
-                    self.return_scan_center(current_y_offset)
-                    return None
-                current_y_offset = target_y_offset
+        for cycle in range(SCAN_MAX_CYCLES):
+            self.get_logger().info(f'[AMR] vision scan cycle {cycle + 1}/{SCAN_MAX_CYCLES}')
+            for target_y_offset in SCAN_Y_OFFSETS_MM:
+                delta_y = target_y_offset - current_y_offset
+                if abs(delta_y) > 1e-6:
+                    if not self.move_l_rel_checked(
+                        self._scan_y_delta(delta_y),
+                        label=f'scan y offset {target_y_offset:.0f}mm',
+                    ):
+                        self.get_logger().error(
+                            f'[AMR] scan move failed: y={target_y_offset:.0f}mm')
+                        self.return_scan_center(current_y_offset)
+                        return None
+                    current_y_offset = target_y_offset
 
-            time.sleep(SCAN_SETTLE_TIME_SEC)
-            self.get_logger().info(
-                f'[AMR] vision scan at y_offset={current_y_offset:.0f}mm')
-
-            res = self.call_vision(
-                target_color,
-                retries=SCAN_VISION_RETRIES_PER_POSE,
-            )
-            if res:
+                time.sleep(SCAN_SETTLE_TIME_SEC)
                 self.get_logger().info(
-                    f'[AMR] vision success at y_offset={current_y_offset:.0f}mm')
-                return res
+                    f'[AMR] vision scan at y_offset={current_y_offset:.0f}mm')
 
-        self.get_logger().warn('[AMR] vision scan failed at all y offsets')
+                res = self.call_vision(
+                    target_color,
+                    retries=SCAN_VISION_RETRIES_PER_POSE,
+                )
+                if res:
+                    self.get_logger().info(
+                        f'[AMR] vision success at y_offset={current_y_offset:.0f}mm')
+                    return res
+
+            self.get_logger().warn(f'[AMR] vision scan cycle {cycle + 1} failed')
+
+        self.get_logger().warn('[AMR] vision scan failed at all cycles')
         if not self.return_scan_center(current_y_offset):
             self.get_logger().error('[AMR] failed to return scan center')
         return None
