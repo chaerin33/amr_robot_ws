@@ -309,6 +309,21 @@ ASSEMBLY_SEQUENCE = {
     462:  [4, 6, 2],     # small_tree:    2x2노랑 → 4x2초록 → 2x2초록
     711:  [1, 1, 3],     # hammer:        2x2빨강 → 2x2빨강 → 2x2파랑
     4482: [4, 4, 8, 2],  # big_carrot:    2x2노랑 → 2x2노랑 → 4x2노랑 → 2x2초록
+    # dict 형식: {'id': 재료id, 'layer': 높이레이어, 'x': Tool X 오프셋(mm)}
+    # 같은 layer 값이 여러 번 나오면 같은 높이에서 x 위치만 달리해 배치한다.
+    48132: [  # ice_cream
+        {'id': 4, 'layer': 0, 'x':  0.0},
+        {'id': 8, 'layer': 1, 'x':  0.0},
+        {'id': 1, 'layer': 2, 'x':  1.0},
+        {'id': 3, 'layer': 2, 'x': -1.0},
+        {'id': 2, 'layer': 3, 'x':  0.0},
+    ],
+    8518: [   # burger
+        {'id': 8, 'layer': 0, 'x':  0.0},
+        {'id': 1, 'layer': 1, 'x':  2.0},
+        {'id': 5, 'layer': 1, 'x': -1.0},
+        {'id': 8, 'layer': 2, 'x':  0.0},
+    ],
 }
 
 
@@ -1448,9 +1463,21 @@ class AmrRobotNode(Node):
         self.get_logger().info(
             f'[ASSEMBLE START] product_id={product_id}, target_slot={target_slot}, steps={len(sequence)}')
 
-        for layer_index, material_id in enumerate(sequence):
+        for enum_idx, step in enumerate(sequence):
+            # int 형식: material_id만, layer=enumerate index, x_offset=0
+            # dict 형식: {'id', 'layer', 'x'} — 같은 layer에 여러 블록 배치 가능
+            if isinstance(step, dict):
+                material_id = step['id']
+                place_layer  = step['layer']
+                x_offset     = step.get('x', 0.0)
+            else:
+                material_id = step
+                place_layer  = enum_idx
+                x_offset     = 0.0
+
             self.get_logger().info(
-                f'[ASSEMBLE] layer={layer_index}, material_id={material_id}')
+                f'[ASSEMBLE] enum={enum_idx}, material_id={material_id}, '
+                f'place_layer={place_layer}, x_offset={x_offset}')
 
             # 1. 카고에서 재료 슬롯 확인
             res = self.call_cargo('FIND_OBJECT', object_id=material_id)
@@ -1462,7 +1489,7 @@ class AmrRobotNode(Node):
                     'success': False,
                     'slot': -1,
                     'object_id': product_id,
-                    'message': f'material {material_id} not found in cargo at layer={layer_index}',
+                    'message': f'material {material_id} not found in cargo at enum={enum_idx}',
                 }
             slot = res.slot
             cargo_layer = res.layer_index
@@ -1476,19 +1503,19 @@ class AmrRobotNode(Node):
                     'success': False,
                     'slot': slot,
                     'object_id': product_id,
-                    'message': f'gripper open failed at layer={layer_index}',
+                    'message': f'gripper open failed at enum={enum_idx}',
                 }
 
             # 3. 재료 슬롯으로 이동
-            if layer_index == 0:
-                # 첫 번째 재료: HOME에서 웨이포인트 경유
+            if enum_idx == 0:
+                # 첫 번째 재료: 이동 포즈에서 웨이포인트 경유
                 if not self.move_to_slot(slot, for_unload=True, layer_index=cargo_layer):
                     self.go_home()
                     return {
                         'success': False,
                         'slot': slot,
                         'object_id': product_id,
-                        'message': f'move to slot={slot} failed at layer={layer_index}',
+                        'message': f'move to slot={slot} failed at enum={enum_idx}',
                     }
             else:
                 # 이후 재료: 조립위치에서 직접 이동 (웨이포인트 없음)
@@ -1511,7 +1538,7 @@ class AmrRobotNode(Node):
                         'success': False,
                         'slot': slot,
                         'object_id': product_id,
-                        'message': f'move to slot={slot} failed at layer={layer_index}',
+                        'message': f'move to slot={slot} failed at enum={enum_idx}',
                     }
 
             # 5. Z 하강
@@ -1524,7 +1551,7 @@ class AmrRobotNode(Node):
                     'success': False,
                     'slot': slot,
                     'object_id': product_id,
-                    'message': f'slot z down failed at layer={layer_index}',
+                    'message': f'slot z down failed at enum={enum_idx}',
                 }
 
             # 6. 그리퍼 grip
@@ -1540,7 +1567,7 @@ class AmrRobotNode(Node):
                     'success': False,
                     'slot': slot,
                     'object_id': product_id,
-                    'message': f'grip failed at layer={layer_index}',
+                    'message': f'grip failed at enum={enum_idx}',
                 }
 
             # 7. Z 상승
@@ -1553,7 +1580,7 @@ class AmrRobotNode(Node):
                     'success': False,
                     'slot': slot,
                     'object_id': product_id,
-                    'message': f'slot z up failed at layer={layer_index}',
+                    'message': f'slot z up failed at enum={enum_idx}',
                 }
 
             # 8. 카고 슬롯 비우기
@@ -1564,27 +1591,44 @@ class AmrRobotNode(Node):
                     'success': False,
                     'slot': slot,
                     'object_id': product_id,
-                    'message': f'cargo CLEAR failed at layer={layer_index}',
+                    'message': f'cargo CLEAR failed at enum={enum_idx}',
                 }
 
             # 9. 조립 위치로 직접 이동 (경유 없이 assembly_joint 로)
             if not self.move_j_checked(
                 assembly_joint,
-                label=f'assemble return to assembly position layer={layer_index}',
+                label=f'assemble return to assembly position enum={enum_idx}',
             ):
                 self.go_home()
                 return {
                     'success': False,
                     'slot': slot,
                     'object_id': product_id,
-                    'message': f'return to assembly position failed at layer={layer_index}',
+                    'message': f'return to assembly position failed at enum={enum_idx}',
                 }
 
-            # 10. 레이어에 맞춰 z 하강 (높은 층일수록 덜 내려감, Tool 기준)
-            z_down = ASSEMBLY_Z_DOWN_MM - (BLOCK_H_MM * layer_index)
+            # 10. place_layer 기준 z 하강 거리 계산 (높은 층일수록 덜 내려감)
+            z_down = ASSEMBLY_Z_DOWN_MM - (BLOCK_H_MM * place_layer)
+
+            # 10a. X 오프셋 이동 (dict 형식에서 같은 layer 내 위치 분리)
+            if abs(x_offset) > 1e-6:
+                if not self.move_l_rel_checked(
+                    [x_offset, 0.0, 0.0, 0.0, 0.0, 0.0],
+                    label=f'assemble x offset={x_offset} enum={enum_idx}',
+                    ref_frame=rb.ReferenceFrame.Tool,
+                ):
+                    self.go_home()
+                    return {
+                        'success': False,
+                        'slot': slot,
+                        'object_id': product_id,
+                        'message': f'assembly x offset failed at enum={enum_idx}',
+                    }
+
+            # 10b. Z 하강 (Tool 기준)
             if not self.move_l_rel_checked(
                 [0.0, 0.0, z_down, 0.0, 0.0, 0.0],
-                label=f'assemble place z down layer={layer_index}',
+                label=f'assemble place z down place_layer={place_layer}',
                 ref_frame=rb.ReferenceFrame.Tool,
             ):
                 self.go_home()
@@ -1592,7 +1636,7 @@ class AmrRobotNode(Node):
                     'success': False,
                     'slot': slot,
                     'object_id': product_id,
-                    'message': f'assembly z down failed at layer={layer_index}',
+                    'message': f'assembly z down failed at enum={enum_idx}',
                 }
 
             # 11. 그리퍼 열기 (블록 내려놓기)
@@ -1600,21 +1644,27 @@ class AmrRobotNode(Node):
                 self.get_logger().error('[AMR] assembly gripper open failed')
                 self.move_l_rel_checked(
                     [0.0, 0.0, -z_down, 0.0, 0.0, 0.0],
-                    label='retreat after assembly open failure',
+                    label='retreat z after assembly open failure',
                     ref_frame=rb.ReferenceFrame.Tool,
                 )
+                if abs(x_offset) > 1e-6:
+                    self.move_l_rel_checked(
+                        [-x_offset, 0.0, 0.0, 0.0, 0.0, 0.0],
+                        label='retreat x after assembly open failure',
+                        ref_frame=rb.ReferenceFrame.Tool,
+                    )
                 self.go_home()
                 return {
                     'success': False,
                     'slot': slot,
                     'object_id': product_id,
-                    'message': f'assembly gripper open failed at layer={layer_index}',
+                    'message': f'assembly gripper open failed at enum={enum_idx}',
                 }
 
-            # 12. Z 상승 (조립 위치로 복귀, Tool 기준)
+            # 12. Z 상승 (Tool 기준)
             if not self.move_l_rel_checked(
                 [0.0, 0.0, -z_down, 0.0, 0.0, 0.0],
-                label=f'assemble place z up layer={layer_index}',
+                label=f'assemble place z up place_layer={place_layer}',
                 ref_frame=rb.ReferenceFrame.Tool,
             ):
                 self.go_home()
@@ -1622,8 +1672,23 @@ class AmrRobotNode(Node):
                     'success': False,
                     'slot': slot,
                     'object_id': product_id,
-                    'message': f'assembly z up failed at layer={layer_index}',
+                    'message': f'assembly z up failed at enum={enum_idx}',
                 }
+
+            # 12a. X 오프셋 복귀 (assembly_joint 기준 위치로 되돌림)
+            if abs(x_offset) > 1e-6:
+                if not self.move_l_rel_checked(
+                    [-x_offset, 0.0, 0.0, 0.0, 0.0, 0.0],
+                    label=f'assemble x return enum={enum_idx}',
+                    ref_frame=rb.ReferenceFrame.Tool,
+                ):
+                    self.go_home()
+                    return {
+                        'success': False,
+                        'slot': slot,
+                        'object_id': product_id,
+                        'message': f'assembly x return failed at enum={enum_idx}',
+                    }
 
         # 13. cargo 등록
         res = self.call_cargo('SET', slot=target_slot, object_id=product_id)
