@@ -364,7 +364,6 @@ class AmrRobotNode(Node):
 
         self._busy_lock = threading.Lock()
         self._busy = False
-        self._at_home = False
 
         self.get_logger().info('[AMR] amr_robot_node started')
 
@@ -531,6 +530,15 @@ class AmrRobotNode(Node):
     def move_j_checked(self, joints_deg, label='move_j', timeout=10.0):
         if not self.is_robot_ready():
             return False
+        if self.robot_data is not None:
+            try:
+                data = self.robot_data.request_data(1.0)
+                cur = np.array([data.sdata.jnt_ang[i] for i in range(6)], dtype=float)
+                if np.all(np.abs(cur - joints_deg) <= 1.0):
+                    self.get_logger().info(f'[AMR] {label} already at target, skip')
+                    return True
+            except Exception:
+                pass
         try:
             self.robot.move_j(self.rc, joints_deg, J_VEL, J_ACC)
         except Exception as e:
@@ -577,27 +585,11 @@ class AmrRobotNode(Node):
                 self._busy = False
 
     def go_home(self):
-        # 이미 HOME에 있으면 제자리 move_j를 보내지 않는다.
-        # (이동량 0인 move_j는 wait_for_move_finished가 완료 신호를 제대로 못 받아
-        #  timeout까지 대기하면서 큰 지연을 유발할 수 있음)
-        # _at_home   : 직전에 HOME 도달한 경우 빠른 스킵(데이터 채널 read 생략)
-        # is_at_home(): 노드amr_robot_node.py 시작 직후처럼 플래그가 없어도 실제 조인트가 HOME이면 스킵
-        if self._at_home or self.is_at_home():
-            self._at_home = True
-            self.get_logger().info('[AMR] already at home, skip go_home')
-            return True
-        if self.move_j_checked(HOME_JOINT_DEG, label='go_home'):
-            self._at_home = True
-            return True
-        return False
+        return self.move_j_checked(HOME_JOINT_DEG, label='go_home')
 
     def go_moving_pose(self):
-        """HOME 복귀 후 AMR 주행용 이동 포즈로 이동한다.
-        반드시 go_home() 이후에 호출할 것 (HOME이 안전한 경유점).
-        이동 포즈에서는 _at_home 을 False 로 내린다."""
         if not self.move_j_checked(MOVING_JOINT_DEG, label='go_moving_pose'):
             return False
-        self._at_home = False
         self.get_logger().info('[AMR] moving pose reached')
         return True
 
@@ -614,10 +606,7 @@ class AmrRobotNode(Node):
             self.get_logger().error(f'[AMR] no waypoints for slot={slot}')
             return False
 
-        self._at_home = False
-
-        # 첫 번째 waypoint(홈 근접)는 스킵
-        move_waypoints = list(waypoints[1:])
+        move_waypoints = list(waypoints)
 
         # UNLOAD_SLOT_WAYPOINTS 사용 시 마지막 WP가 이미 픽업 위치이므로 교체 안 함
         if for_unload and slot not in UNLOAD_SLOT_WAYPOINTS:
@@ -625,7 +614,7 @@ class AmrRobotNode(Node):
             if unload_joint is not None:
                 move_waypoints[-1] = unload_joint
 
-        for idx, wp in enumerate(move_waypoints, start=2):
+        for idx, wp in enumerate(move_waypoints, start=1):
             if not self.move_j_checked(wp, label=f'move_to_slot({slot}) wp{idx}'):
                 return False
 
@@ -654,8 +643,6 @@ class AmrRobotNode(Node):
                 return False
 
         self.get_logger().info(f'[AMR] returned from slot={slot}')
-        if not skip_last:
-            self._at_home = True
         return True
 
     def product_delivery_z(self, object_id):
@@ -675,10 +662,6 @@ class AmrRobotNode(Node):
             self.get_logger().error(f'[AMR] no waypoints for delivery_idx={delivery_idx}')
             return False
 
-        # delivery로 이동하면 HOME을 벗어나므로 플래그를 내린다.
-        # (return_from_slot에서 _at_home=True로 설정된 직후 호출되기 때문에 필수)
-        self._at_home = False
-
         for idx, wp in enumerate(waypoints, start=1):
             if not self.move_j_checked(wp, label=f'move_to_delivery({delivery_idx}) wp{idx}'):
                 return False
@@ -687,11 +670,9 @@ class AmrRobotNode(Node):
         return True
 
     def return_from_delivery(self, delivery_idx):
-        # delivery 웨이포인트가 1개뿐이면, 역순 복귀 시 현재 자세로 제자리 move_j를
-        # 보내게 되는데, 이동량 0인 move_j는 wait_for_move_finished가 완료 신호를
-        # 제대로 못 받아 timeout까지 대기하면서 큰 지연을 유발한다.
-        # delivery 직후에는 어차피 HOME으로 복귀하므로, 중간 경유 없이 바로 HOME으로 간다.
-        # (waypoint가 여러 개로 늘어나면 마지막 자세를 제외한 경유점만 역순으로 탄다.)
+        # waypoint가 1개뿐이면 역순 복귀 없이 그대로 반환.
+        # (move_j_checked가 zero-distance를 자동 skip하므로 별도 처리 불필요)
+        # waypoint가 여러 개이면 마지막 자세를 제외한 경유점만 역순으로 탄다.
         waypoints = DELIVERY_WAYPOINTS.get(delivery_idx)
         if waypoints is None:
             self.get_logger().error(f'[AMR] no waypoints for delivery_idx={delivery_idx}')
@@ -712,7 +693,6 @@ class AmrRobotNode(Node):
             self.get_logger().error('[AMR] no product verification waypoints')
             return False
 
-        self._at_home = False
         for idx, wp in enumerate(waypoints, start=1):
             if not self.move_j_checked(wp, label=f'move_to_product_verify wp{idx}'):
                 return False
@@ -769,7 +749,6 @@ class AmrRobotNode(Node):
                 f'off={off}, vision_yaw={p.yaw:.2f} -> yaw={yaw:.2f}'
             )
 
-        self._at_home = False
         if not self.move_l_rel_checked(
             [tool_x, tool_y, tool_z, 0.0, 0.0, yaw],
             label=f'{label_prefix} yaw+xy+z approach',
@@ -851,11 +830,11 @@ class AmrRobotNode(Node):
             f'[UNLOAD VERIFY] recovery start: object_id={object_id}'
         )
 
-        #1. 홈 복귀가 생략되고 Yaw를 먼저 돌리는 복구 전용 픽업 호출
+        # 1. 검증 위치에서 바로 비전 탐색 후 파지 (yaw 먼저 돌리는 복구 전용 픽업)
         if not self.recovery_pick_by_vision(object_id, label_prefix='recovery'):
             return False
 
-        # 2. 홈이나 카고를 들리지 않고 바로 배송 위치로 다이렉트 이동 및 하역
+        # 2. 바로 배송 위치로 이동 및 하역
         if not self.place_at_delivery(
             object_id,
             PRODUCT_DELIVERY_IDX,
@@ -872,8 +851,6 @@ class AmrRobotNode(Node):
         # 1. 그리퍼 열기
         if not self.call_gripper(False):
             return False
-
-        # [수정 포인트] go_home() 삭제됨. 현재 검증(Verify) 위치에서 바로 비전 탐색 진행
 
         # 2. 비전 탐색
         p = self.call_vision_with_y_scan(vision_target)
@@ -898,9 +875,6 @@ class AmrRobotNode(Node):
                 f'off={off}, vision_yaw(raw)={p.yaw:.2f}'
             )
 
-        self._at_home = False
-
-        # --- [수정 포인트] yaw 먼저 돌리고 xyz 이동 ---
         # 4. yaw 회전 선행
         if not self.move_l_rel_checked(
             [0.0, 0.0, 0.0, 0.0, 0.0, yaw],
@@ -919,8 +893,6 @@ class AmrRobotNode(Node):
             label=f'{label_prefix} xy+z approach',
         ):
             return False
-        # ---------------------------------------------
-
         # 6. 최종 수직 하강
         if not self.move_l_rel_checked(
             [0.0, 0.0, Z_MARGIN, 0.0, 0.0, 0.0],
@@ -945,7 +917,6 @@ class AmrRobotNode(Node):
         ):
             return False
 
-        # [수정 포인트] 끝난 후 go_home() 삭제됨. 들어 올린 상태로 리턴.
         return True
 
     # --- 서비스 콜백 (LOAD / UNLOAD 분기) ---
@@ -1081,30 +1052,13 @@ class AmrRobotNode(Node):
             }
 
         # 4. YAW + XY + Z접근 동시 이동
-        #    move_l_rel(Tool)의 병진 성분은 이동 시작(HOME) 프레임 기준으로 적용되고,
-        #    yaw(rz)는 tool Z축 방향 자체를 안 바꾸므로, HOME에서 측정한 dx/dy/z를
-        #    한 모션에 합칠 수 있다. 단 물체 바로 위(Z_MARGIN)까지만 대각선으로 내려가고,
+        #    물체 바로 위(Z_MARGIN)까지 대각선으로 내려가고,
         #    최종 접근은 5번에서 수직으로 따로 한다. (대각선 최종접근은 파지 안정성 저하)
         off = get_pick_offset(object_id)
         dx = -(p.x * 1000.0) + CAM_Y_OFF
         dy = (p.y * 1000.0) + CAM_X_OFF
         z_move = (p.z * 1000.0) + Z_OFFSET
 
-        # #    NOTE: p.yaw 단위는 deg. 손목이 반대로 돌거나 단위가 rad이면
-        # #          rz 항(yaw)을 -yaw 또는 np.radians(...)로 조정할 것.
-        # #    특정 완성품(e_stop/burger/big_tree)은 파지 방향을 맞추려고 -90도 보정.
-        # yaw = p.yaw + YAW_OFFSET_DEG.get(object_id, 0.0)
-        # if object_id in YAW_OFFSET_DEG:
-        #     self.get_logger().info(
-        #         f'[LOAD] yaw offset applied: object_id={object_id}, '
-        #         f'vision_yaw={p.yaw:.2f} -> yaw={yaw:.2f}')
-        # self._at_home = False  # 이 이동부터 HOME을 벗어남
-        # if not self.move_l_rel_checked(
-        #     [dy, dx, z_move - Z_MARGIN, 0.0, 0.0, yaw],
-        #     label='yaw+xy+z approach',
-        # ):
-        #    NOTE: p.yaw 단위는 deg. 손목이 반대로 돌거나 단위가 rad이면 조정.
-        #    제품별 파지 보정(PICK_OFFSET)을 비전 좌표 위에 더한다.
         yaw = p.yaw + off['yaw']
 
         tool_x = dy + off['x']
@@ -1116,7 +1070,6 @@ class AmrRobotNode(Node):
                 f'[LOAD] pick offset applied: object_id={object_id}, '
                 f'off={off}, vision_yaw={p.yaw:.2f} -> yaw={yaw:.2f}')
 
-        self._at_home = False  # 이 이동부터 HOME을 벗어남
         if not self.move_l_rel_checked(
             [tool_x, tool_y, tool_z, 0.0, 0.0, yaw],
             label='yaw+xy+z approach',
@@ -1222,8 +1175,8 @@ class AmrRobotNode(Node):
                 'message': 'place z up failed',
             }
 
-        # 10. 웨이포인트 역순으로 홈 복귀
-        #     마지막 물체면 HOME_JOINT_DEG 경유를 생략하고 호출부에서 곧장 이동 포즈로 간다.
+        # 10. 웨이포인트 역순으로 복귀
+        #     마지막 물체면 복귀 경로의 끝점(SLOT_COMMON_WPS[0])을 생략하고 바로 이동 포즈로 간다.
         if not self.return_from_slot(slot, skip_last=is_last):
             return {
                 'success': False,
