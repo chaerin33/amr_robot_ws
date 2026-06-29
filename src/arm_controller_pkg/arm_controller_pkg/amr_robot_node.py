@@ -23,7 +23,6 @@ VISION_LOAD_JOINT_DEG = np.array([-90.0,  13.28,  75.45, 0.0, 91.27, 0.0])
 # np.array([-90.0, 14.26, 66.11, 0.0, 99.62, 0.0]),  z=381.28
 
 # 슬롯 2~8 공통 경유점 (슬롯 1은 경로가 달라 별도 관리)
-# 첫 번째 포인트는 HOME_JOINT_DEG와 동일하게 유지한다.
 SLOT_COMMON_WPS = [
     np.array([-90.0,    13.70,   69.94, 0.0,  96.36,  0.0]),
     np.array([-90.0,   -20.81,  107.71, 0.0,  93.11,  0.0]),
@@ -101,6 +100,10 @@ FINISHED_PRODUCTS = PRODUCT_FLOOR_1 | PRODUCT_FLOOR_2_5 | PRODUCT_FLOOR_2
 # 완성품 unload 시 사용할 고정 delivery 인덱스.
 # 완성품은 처리 순서(delivery_idx)와 무관하게 항상 DELIVERY_WAYPOINTS[6] 으로 간다.
 PRODUCT_DELIVERY_IDX = 6
+
+# 워크벤치 station_id 목록 — 경기 당일 확인 후 여기만 수정한다.
+# 이 목록에 포함된 station_id로 UNLOAD 시 delivery 기록을 하지 않는다.
+WORKBENCH_STATION_IDS = {1}
 
 # --- LOAD 비전/오프셋 상수 ---
 CAM_X_OFF = -51.0
@@ -479,11 +482,12 @@ class AmrRobotNode(Node):
         self.get_logger().error(f'[GRIPPER] {action_name} failed')
         return False
 
-    def call_cargo(self, action, slot=0, object_id=0):
+    def call_cargo(self, action, slot=0, object_id=0, station_id=0):
         req = Cargo.Request()
         req.action = action
         req.slot = slot
         req.object_id = object_id
+        req.station_id = station_id
         return self.call_service(self.cargo_client, req)
 
     # --- 로봇 이동 헬퍼 ---
@@ -576,7 +580,7 @@ class AmrRobotNode(Node):
 
     # --- 웨이포인트 이동 (action별 테이블을 인자로 받음) ---
 
-    def move_to_slot(self, slot, for_unload=False):
+    def move_to_slot(self, slot, for_unload=False, layer_index=0):
         waypoints = SLOT_WAYPOINTS.get(slot)
         if waypoints is None:
             self.get_logger().error(f'[AMR] no waypoints for slot={slot}')
@@ -586,16 +590,15 @@ class AmrRobotNode(Node):
         # (이게 빠지면 이후 go_home()이 실제 위치와 무관하게 스킵될 수 있다.)
         self._at_home = False
 
-        # 정방향 첫 번째 waypoint는 HOME_JOINT_DEG라서 스킵한다.
-        move_waypoints = list(waypoints[1:])
+        move_waypoints = list(waypoints)
 
-        # UNLOAD 시 UNLOAD_SLOT_JOINTS에 정의된 슬롯(2~6)은 마지막 위치만 교체한다.
+        # UNLOAD/ASSEMBLE 시 마지막 위치를 레이어별 UNLOAD_SLOT_JOINTS로 교체한다.
         if for_unload:
-            unload_joint = UNLOAD_SLOT_JOINTS.get(slot * 10)
+            unload_joint = UNLOAD_SLOT_JOINTS.get(slot * 10 + layer_index)
             if unload_joint is not None:
                 move_waypoints[-1] = unload_joint
 
-        for idx, wp in enumerate(move_waypoints, start=2):
+        for idx, wp in enumerate(move_waypoints, start=1):
             if not self.move_j_checked(wp, label=f'move_to_slot({slot}) wp{idx}'):
                 return False
 
@@ -622,7 +625,7 @@ class AmrRobotNode(Node):
 
         self.get_logger().info(f'[AMR] returned from slot={slot}')
         if not skip_last:
-            self._at_home = True
+            self._at_home = self.is_at_home()
         return True
 
     def product_delivery_z(self, object_id):
@@ -1242,7 +1245,7 @@ class AmrRobotNode(Node):
         last_idx = len(object_ids) - 1
         for idx, object_id in enumerate(object_ids):
             is_last = (idx == last_idx)
-            result = self.sequence_unload(object_id, idx, is_last=is_last, station_id=station_id)
+            result = self.sequence_unload(object_id, is_last=is_last, station_id=station_id, fallback_idx=idx)
             results.append(result)
             if not result['success']:
                 self.get_logger().error(f'[AMR] unload failed at object_id={object_id}, stopping')
@@ -1261,7 +1264,7 @@ class AmrRobotNode(Node):
         self.go_moving_pose()
         return results
 
-    def sequence_unload(self, object_id, delivery_idx, is_last=False, station_id=0):
+    def sequence_unload(self, object_id, is_last=False, station_id=0, fallback_idx=0):
         if not self.is_robot_ready():
             return {
                 'success': False,
@@ -1270,12 +1273,10 @@ class AmrRobotNode(Node):
                 'message': 'robot not connected',
             }
 
-        self.get_logger().info(f'[UNLOAD START] object_id={object_id}, delivery_idx={delivery_idx}')
+        self.get_logger().info(f'[UNLOAD START] object_id={object_id}, station_id={station_id}')
 
         # 완성품 여부 판별: 완성품이면 delivery 단계에서 전용 포인트/전용 Z를 쓴다.
         is_product = object_id in FINISHED_PRODUCTS
-        if is_product:
-            self.get_logger().info(f'[UNLOAD] object_id={object_id} is a finished product')
 
         # 1. 슬롯 확인
         res = self.call_cargo('FIND_OBJECT', object_id=object_id)
@@ -1290,7 +1291,41 @@ class AmrRobotNode(Node):
         slot = res.slot
         self.get_logger().info(f'[CARGO] object found: slot={slot}')
 
-        # 2. 초기화
+        # 슬롯 7,8(조립 결과 슬롯)은 픽업 Z는 조립 기준(90mm)으로 유지하되,
+        # delivery는 일반 재료와 동일하게 delivery_idx 순서 경로를 사용한다.
+        is_assembly_slot = slot in (7, 8)
+        if is_assembly_slot:
+            is_product = False
+            self.get_logger().info(f'[UNLOAD] slot={slot} is assembly slot, use regular delivery')
+        elif is_product:
+            self.get_logger().info(f'[UNLOAD] object_id={object_id} is a finished product')
+
+        # 2. delivery 위치 결정
+        #    완성품: 항상 6번 포인트
+        #    워크벤치: 순서대로 내려놓기만 하면 되므로 fallback_idx 사용 (기록 없음)
+        #    커스터머 센터: cargo_manager에서 빈 자리 자동 탐색 후 기록
+        if is_product:
+            target_delivery_idx = PRODUCT_DELIVERY_IDX
+        elif station_id in WORKBENCH_STATION_IDS:
+            target_delivery_idx = fallback_idx
+            self.get_logger().info(
+                f'[UNLOAD] workbench station={station_id}, use fallback_idx={fallback_idx}')
+        else:
+            res = self.call_cargo('FIND_DELIVERY_EMPTY', station_id=station_id)
+            if not res or not res.success:
+                self.get_logger().error(
+                    f'[AMR] no empty delivery slot at station={station_id}')
+                return {
+                    'success': False,
+                    'slot': slot,
+                    'object_id': object_id,
+                    'message': f'no empty delivery slot at station={station_id}',
+                }
+            target_delivery_idx = res.slot
+            self.get_logger().info(
+                f'[CARGO] delivery slot: station={station_id}, idx={target_delivery_idx}')
+
+        # 3. 초기화
         if not self.call_gripper(False):
             return {
                 'success': False,
@@ -1317,9 +1352,10 @@ class AmrRobotNode(Node):
                 'message': 'move to slot failed',
             }
 
-        # 4-6. 픽업: 완성품은 ASSEMBLY_Z (90mm), 일반 재료는 UNLOAD_Z (55mm)
-        pickup_z_down = ASSEMBLY_Z_DOWN_MM if is_product else UNLOAD_Z_DOWN_MM
-        pickup_z_up   = ASSEMBLY_Z_UP_MM   if is_product else UNLOAD_Z_UP_MM
+        # 4-6. 픽업 Z: 완성품 또는 조립 슬롯(7,8)은 ASSEMBLY_Z(90mm), 일반 재료는 UNLOAD_Z(55mm)
+        use_assembly_z = is_product or is_assembly_slot
+        pickup_z_down = ASSEMBLY_Z_DOWN_MM if use_assembly_z else UNLOAD_Z_DOWN_MM
+        pickup_z_up   = ASSEMBLY_Z_UP_MM   if use_assembly_z else UNLOAD_Z_UP_MM
 
         # 4. Tool Z+ 하강
         self.get_logger().info('[AMR] start slot z down')
@@ -1385,8 +1421,6 @@ class AmrRobotNode(Node):
             }
 
         # 9. 배달 위치로 이동
-        #    완성품은 처리 순서(delivery_idx)와 무관하게 항상 6번 포인트로 간다.
-        target_delivery_idx = PRODUCT_DELIVERY_IDX if is_product else delivery_idx
         if not self.place_at_delivery(object_id, target_delivery_idx, is_product):
             self.go_home()
             return {
@@ -1415,6 +1449,15 @@ class AmrRobotNode(Node):
                     'message': 'product unload verification failed after recovery',
                 }
 
+        # 10. delivery 상태 기록 (커스터머 센터만; 워크벤치와 완성품은 기록 안 함)
+        if not is_product and station_id not in WORKBENCH_STATION_IDS:
+            self.call_cargo(
+                'SET_DELIVERY',
+                slot=target_delivery_idx,
+                object_id=object_id,
+                station_id=station_id,
+            )
+
         # 11. 웨이포인트 역순으로 홈 복귀
         if not self.return_from_delivery(target_delivery_idx):
             return {
@@ -1442,7 +1485,7 @@ class AmrRobotNode(Node):
                 '[UNLOAD] last object: skip go_home (will go straight to moving pose)')
 
         self.get_logger().info(
-            f'[UNLOAD DONE] object_id={object_id}, slot={slot}, delivery_idx={delivery_idx}'
+            f'[UNLOAD DONE] object_id={object_id}, slot={slot}, delivery_idx={target_delivery_idx}'
         )
         return {
             'success': True,
@@ -1494,8 +1537,6 @@ class AmrRobotNode(Node):
                 'message': f'no slot waypoints for target_slot={target_slot}',
             }
 
-        assembly_joint = assembly_wps[-1]  # SLOT_WAYPOINTS 마지막 WP = 조립 위치
-
         sequence = ASSEMBLY_SEQUENCE.get(product_id)
         if sequence is None:
             self.get_logger().error(
@@ -1510,15 +1551,16 @@ class AmrRobotNode(Node):
         self.get_logger().info(
             f'[ASSEMBLE START] product_id={product_id}, target_slot={target_slot}, steps={len(sequence)}')
 
-        # 1. SLOT_WAYPOINTS 경유해서 조립 위치(target_slot)로 이동
-        if not self.move_to_slot(target_slot):
-            self.go_home()
+        # 1. 안전한 출발 자세로 복귀
+        if not self.go_home():
             return {
                 'success': False,
                 'slot': -1,
                 'object_id': product_id,
-                'message': 'move to assembly slot failed',
+                'message': 'go_home failed before assemble',
             }
+
+        last_layer_index = len(sequence) - 1
 
         for layer_index, material_id in enumerate(sequence):
             self.get_logger().info(
@@ -1550,9 +1592,8 @@ class AmrRobotNode(Node):
                     'message': f'gripper open failed at layer={layer_index}',
                 }
 
-            # 4. 조립용 슬롯 조인트로 직접 이동 (조립 위치에서 출발)
-            slot_joint = UNLOAD_SLOT_JOINTS.get(slot * 10 + layer_index)
-            if slot_joint is None:
+            # 4. 재료 슬롯으로 웨이포인트 경유 이동
+            if UNLOAD_SLOT_JOINTS.get(slot * 10 + layer_index) is None:
                 self.get_logger().error(
                     f'[AMR] no unload slot joint for slot={slot} layer={layer_index}')
                 self.go_home()
@@ -1560,11 +1601,9 @@ class AmrRobotNode(Node):
                     'success': False,
                     'slot': slot,
                     'object_id': product_id,
-                    'message': f'no assembly slot joint for slot={slot}',
+                    'message': f'no assembly slot joint for slot={slot} layer={layer_index}',
                 }
-            if not self.move_j_checked(
-                slot_joint, label=f'assemble to slot={slot} layer={layer_index}'
-            ):
+            if not self.move_to_slot(slot, for_unload=True, layer_index=layer_index):
                 self.go_home()
                 return {
                     'success': False,
@@ -1626,17 +1665,24 @@ class AmrRobotNode(Node):
                     'message': f'cargo CLEAR failed at layer={layer_index}',
                 }
 
-            # 9. 조립 위치로 직접 이동 (경유 없이 assembly_joint 로)
-            if not self.move_j_checked(
-                assembly_joint,
-                label=f'assemble return to assembly position layer={layer_index}',
-            ):
+            # 9a. 재료 슬롯에서 웨이포인트 역순으로 복귀
+            if not self.return_from_slot(slot):
                 self.go_home()
                 return {
                     'success': False,
                     'slot': slot,
                     'object_id': product_id,
-                    'message': f'return to assembly position failed at layer={layer_index}',
+                    'message': f'return from slot={slot} failed at layer={layer_index}',
+                }
+
+            # 9b. 웨이포인트 경유 조립 위치로 이동
+            if not self.move_to_slot(target_slot):
+                self.go_home()
+                return {
+                    'success': False,
+                    'slot': slot,
+                    'object_id': product_id,
+                    'message': f'move to assembly slot={target_slot} failed at layer={layer_index}',
                 }
 
             # 10. 레이어에 맞춰 z 하강 (높은 층일수록 덜 내려감, Tool 기준)
@@ -1670,7 +1716,7 @@ class AmrRobotNode(Node):
                     'message': f'assembly gripper open failed at layer={layer_index}',
                 }
 
-            # 12. Z 상승 (조립 위치로 복귀, Tool 기준)
+            # 12. Z 상승 (Tool 기준)
             if not self.move_l_rel_checked(
                 [0.0, 0.0, -z_down, 0.0, 0.0, 0.0],
                 label=f'assemble place z up layer={layer_index}',
@@ -1683,6 +1729,18 @@ class AmrRobotNode(Node):
                     'object_id': product_id,
                     'message': f'assembly z up failed at layer={layer_index}',
                 }
+
+            # 13. 다음 레이어가 있으면 조립 위치에서 역순 복귀 후 반복
+            #     마지막 레이어는 sequence_assemble_multi 에서 return_from_slot 처리
+            if layer_index < last_layer_index:
+                if not self.return_from_slot(target_slot):
+                    self.go_home()
+                    return {
+                        'success': False,
+                        'slot': slot,
+                        'object_id': product_id,
+                        'message': f'return from assembly slot failed at layer={layer_index}',
+                    }
 
         # 13. cargo 등록
         res = self.call_cargo('SET', slot=target_slot, object_id=product_id)
