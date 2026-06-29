@@ -15,7 +15,8 @@ MATERIAL_NAMES = {
 }
 
 PRODUCT_SLOT = 1
-MATERIAL_SLOTS = [2, 3, 4, 5, 6, 7]
+MATERIAL_SLOTS = [2, 3, 4, 5, 6]
+ASSEMBLY_SLOTS = [7, 8]  # 이동 중 조립 슬롯 (FIND_EMPTY 검색 대상 아님)
 
 
 class CargoManagerNode(Node):
@@ -23,7 +24,7 @@ class CargoManagerNode(Node):
         super().__init__('cargo_manager_node')
         self.srv = self.create_service(Cargo, '/cargo', self.cargo_cb)
 
-        self.slot_state = {slot: None for slot in [PRODUCT_SLOT] + MATERIAL_SLOTS}
+        self.slot_state = {slot: None for slot in [PRODUCT_SLOT] + MATERIAL_SLOTS + ASSEMBLY_SLOTS}
 
         # 커스터머 센터 delivery 상태: {station_id: {delivery_idx: object_id or None}}
         self.delivery_state = {}
